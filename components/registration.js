@@ -29,7 +29,7 @@ export default function Register() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#dffcbc',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 15,
     paddingLeft: 10,
+    backgroundColor: '#ffff',
   },
   getStartedButton: {
     backgroundColor: '#000',

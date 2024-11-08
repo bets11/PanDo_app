@@ -14,13 +14,13 @@ export default function Overview() {
       <Text style={styles.title}>PANDO</Text>
 
       <View style={styles.gridContainer}>
-        <TouchableOpacity style={styles.box}>
+        <TouchableOpacity style={[styles.box, styles.box1]}>
           <Text style={styles.boxText}>Weekly-Planner / To-Do</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.box}>
+        <TouchableOpacity style={[styles.box, styles.box2]}>
           <Text style={styles.boxText}>Therapy</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.box}>
+        <TouchableOpacity style={[styles.box, styles.box3]}>
           <Text style={styles.boxText}>Progress</Text>
         </TouchableOpacity>
       </View>
@@ -31,7 +31,7 @@ export default function Overview() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#dffcbc',
     padding: 20,
   },
   header: {
@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 1,
     borderColor: '#000',
+    backgroundColor: '#fff',
   },
   settingsButton: {
     width: 50,
@@ -56,6 +57,7 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#fff',
   },
   settingsImage: {
     width: 30,
@@ -77,13 +79,23 @@ const styles = StyleSheet.create({
   box: {
     width: '45%',
     height: 120,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f6fcbc',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 10,
+  },
+  box1: {
+    backgroundColor: '#f6fcbc', 
+  },
+  box2: {
+    backgroundColor: '#c0e8f6',
+  },
+  box3: {
+    backgroundColor: '#f7d9c4',
+    marginLeft: 105,
   },
   boxText: {
     fontSize: 16,

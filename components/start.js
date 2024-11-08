@@ -38,7 +38,7 @@ export default function Start() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#dffcbc',
     alignItems: 'center',
     justifyContent: 'center',
   },

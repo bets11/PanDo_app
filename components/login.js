@@ -26,14 +26,14 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#dffcbc',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
   },
   pandaImage: {
-    width: 100,
-    height: 100,
+    width: 125,
+    height: 125,
     marginBottom: 20,
     resizeMode: 'contain',
   },
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 15,
     paddingLeft: 10,
+    backgroundColor: '#ffffff',
   },
   loginButton: {
     backgroundColor: '#000',
