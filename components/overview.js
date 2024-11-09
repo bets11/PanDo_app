@@ -1,15 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 
 export default function Overview() {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <SafeAreaView style={styles.header}>
+        <TouchableOpacity style={styles.profileButton}>
         <Image source={require('../assets/panda.png')} style={styles.profileImage} />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.settingsButton}>
           <Image source={require('../assets/setting.png')} style={styles.settingsImage} />
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
 
       <Text style={styles.title}>PANDO</Text>
 
@@ -22,6 +24,9 @@ export default function Overview() {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.box, styles.box3]}>
           <Text style={styles.boxText}>Progress</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.box, styles.box4]}>
+          <Text style={styles.boxText}>Medics-Tracker</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -39,7 +44,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
-    marginTop: 30,
   },
   profileImage: {
     width: 50,
@@ -69,7 +73,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 150,
-    marginTop: 20,
+    marginTop: 10,
   },
   gridContainer: {
     flexDirection: 'row',
@@ -95,8 +99,10 @@ const styles = StyleSheet.create({
   },
   box3: {
     backgroundColor: '#f7d9c4',
-    marginLeft: 105,
   },
+  box4: {
+    backgroundColor: '#f9cf9c',
+  }, 
   boxText: {
     fontSize: 16,
     fontWeight: 'bold',
