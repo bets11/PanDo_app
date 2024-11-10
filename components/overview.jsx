@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, SafeAreaView, Modal } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Overview() {
+  const navigation = useNavigation(); 
   const [isProfileVisible, setProfileVisible] = useState(false);
 
   const toggleProfile = () => {
@@ -31,7 +33,10 @@ export default function Overview() {
         <TouchableOpacity style={[styles.box, styles.box3]}>
           <Text style={styles.boxText}>Therapy / Game</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.box, styles.box4]}>
+        <TouchableOpacity 
+          style={[styles.box, styles.box4]} 
+          onPress={() => navigation.navigate('Progress')} 
+        >
           <Text style={styles.boxText}>Progress</Text>
         </TouchableOpacity>
       </View>
