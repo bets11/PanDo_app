@@ -24,10 +24,10 @@ export default function Overview() {
       <Text style={styles.title}>PANDO</Text>
 
       <View style={styles.gridContainer}>
-        <TouchableOpacity style={[styles.box, styles.box1]}>
+        <TouchableOpacity style={[styles.box, styles.box1]} onPress={() => navigation.navigate('Plan')}>
           <Text style={styles.boxText}>Weekly-Planner / To-Do</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.box, styles.box2]}>
+        <TouchableOpacity style={[styles.box, styles.box2]} onPress={() => navigation.navigate('Medics')}>
           <Text style={styles.boxText}>Medics - Tracker</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.box, styles.box3]}>

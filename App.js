@@ -6,6 +6,8 @@ import Login from './components/login';
 import Register from './components/registration';
 import Overview from './components/overview';
 import Progress from './components/progress'; 
+import Plan from './components/plan';
+import Medics from './components/medics';
 
 const Stack = createStackNavigator();
 
@@ -18,6 +20,8 @@ export default function App() {
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Overview" component={Overview} />
         <Stack.Screen name="Progress" component={Progress} /> 
+        <Stack.Screen name="Plan" component={Plan}/>
+        <Stack.Screen name="Medics" component={Medics}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
