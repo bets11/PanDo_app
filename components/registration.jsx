@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text,  TextInput, View, TouchableOpacity, Image, Alert, Platform } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Alert, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Register() {
   const navigation = useNavigation(); 
@@ -15,12 +16,12 @@ export default function Register() {
 
   const handleGetStarted = () => {
     if (!firstName || !username || !birthdate) {
-      Alert.alert('Fehler', 'Bitte füllen Sie alle Pflichtfelder aus.');
+      Alert.alert('Error', 'Please fill in all mandatory fields');
       return;
     }
     const year = new Date(birthdate).getFullYear();
-    if (year < 1980) {
-      Alert.alert('Fehler', 'Das Geburtsjahr muss ab 2000 sein.');
+    if (year < 2000) {
+      Alert.alert('Error', 'The year of birth must be 2000 or later');
       return;
     }
 
@@ -34,8 +35,19 @@ export default function Register() {
     }
   };
 
+  const goBack = () => {
+    navigation.goBack();
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={styles.mainContainer}>
+      <View style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <TouchableOpacity onPress={goBack} style={styles.backButton}>
+            <Text style={styles.backButtonText}>Go back...</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+
       <Image source={require('../assets/panda.png')} style={styles.pandaImage} />
       
       <Text style={styles.label}>First & Last Name <Text style={styles.required}>*</Text></Text>
@@ -98,16 +110,32 @@ export default function Register() {
         <Text style={styles.getStartedText}>Get Started</Text>
       </TouchableOpacity>
     </View>
+    </View>
+    
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
     backgroundColor: '#dffcbc',
+  },
+  container: {
     alignItems: 'center',
-    justifyContent: 'center',
     padding: 20,
+  },
+  safeArea: {
+    alignSelf: 'flex-start',
+    width: '100%',
+    paddingLeft: 10,
+    marginBottom: 15,
+  },
+  backButton: {
+    alignItems: 'flex-start',
+  },
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   pandaImage: {
     width: 100,
@@ -132,7 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 15,
     paddingLeft: 10,
-    backgroundColor: '#ffff',
+    backgroundColor: '#fff',
   },
   dateInput: {
     width: '100%',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, Modal } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, Modal, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function Plan() {
@@ -56,8 +56,18 @@ export default function Plan() {
     alert('Add new event');
   };
 
+  const goBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.mainContainer}>
+      <SafeAreaView style={styles.safeArea}>
+        <TouchableOpacity onPress={goBack} style={styles.backButton}>
+          <Text style={styles.backButtonText}>Go back...</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+
       <View style={styles.container}>
         <Image source={require('../assets/panda.png')} style={styles.pandaImage} />
 
@@ -77,10 +87,6 @@ export default function Plan() {
           ))}
         </ScrollView>
       </View>
-
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>←</Text>
-      </TouchableOpacity>
 
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconButton} onPress={handleAddEvent}>
@@ -136,15 +142,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f6fcbc',
   },
+  safeArea: {
+    width: '100%',
+    marginLeft: 20,
+  },
+  backButton: {
+    marginBottom: 3,
+  },
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingVertical: 100,
+    paddingVertical: 10,
     paddingBottom: 80,
   },
   pandaImage: {
-    width: 50,
-    height: 50,
+    width: 65,
+    height: 65,
     alignSelf: 'center',
     marginBottom: 20,
   },
@@ -189,14 +207,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 1,
     backgroundColor: '#000', 
-  },
-  backButton: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-  },
-  backButtonText: {
-    fontSize: 32,
   },
   iconContainer: {
     flexDirection: 'row',

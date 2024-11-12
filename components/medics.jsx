@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, Dimensions, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Medics() {
+  const navigation = useNavigation();
   const [medicines, setMedicines] = useState(['Doxybene', 'Kreon']);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
@@ -15,8 +17,18 @@ export default function Medics() {
     setMedicines([...medicines, `Medicine ${medicines.length + 1}`]);
   };
 
+  const goBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        <TouchableOpacity onPress={goBack} style={styles.backButton}>
+          <Text style={styles.backButtonText}>Go back...</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+
       <Text style={styles.title}>Add your medicines</Text>
       <View style={styles.medicinesContainer}>
         {medicines.map((medicine, index) => (
@@ -59,12 +71,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#c0e8f6',
     padding: 20,
   },
+  safeArea: {
+    width: '100%',
+    paddingLeft: 10,
+    marginBottom: 15,
+  },
+  backButton: {
+    marginBottom: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 40,
-    marginTop: 40, 
+    marginTop: 10,
   },
   medicinesContainer: {
     flexDirection: 'row',
@@ -72,7 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   medicineBox: {
-    width: Dimensions.get('window').width / 3 - 20,  
+    width: Dimensions.get('window').width / 3 - 20,
     height: 80,
     backgroundColor: '#e0e0e0',
     alignItems: 'center',
@@ -86,7 +111,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   addBox: {
-    width: Dimensions.get('window').width / 3 - 20,  
+    width: Dimensions.get('window').width / 3 - 20,
     height: 80,
     backgroundColor: '#f9f9f9',
     alignItems: 'center',
