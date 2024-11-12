@@ -8,6 +8,7 @@ import Overview from './components/overview';
 import Progress from './components/progress'; 
 import Plan from './components/plan';
 import Medics from './components/medics';
+import Therapy from './components/therapy';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen name="Progress" component={Progress} /> 
         <Stack.Screen name="Plan" component={Plan}/>
         <Stack.Screen name="Medics" component={Medics}/>
+        <Stack.Screen name="Therapy" component={Therapy}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
