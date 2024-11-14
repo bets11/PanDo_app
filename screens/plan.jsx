@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, Modal, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import GoBackButton from '../components/common/goBackButton';
+import DateDisplay from '../components/plan/dateDisplay';
+import HourlyScrollList from '../components/plan/hourlyScrollList';
+import EventButtons from '../components/plan/eventsButton';
+import WeeklyModal from '../components/plan/weeklyModal';
 
 export default function Plan() {
   const navigation = useNavigation();
@@ -63,76 +68,23 @@ export default function Plan() {
   return (
     <View style={styles.mainContainer}>
       <SafeAreaView style={styles.safeArea}>
-        <TouchableOpacity onPress={goBack} style={styles.backButton}>
-          <Text style={styles.backButtonText}>Go back...</Text>
-        </TouchableOpacity>
+        <GoBackButton onPress={goBack} />
       </SafeAreaView>
 
-      <View style={styles.container}>
-        <Image source={require('../assets/panda.png')} style={styles.pandaImage} />
-
-        <Text style={styles.title}>Create your plan!</Text>
-
-        <View style={styles.dateContainer}>
-          <Text style={styles.dateText}>{date}</Text>
-          <Text style={styles.dayText}>{day}</Text>
-        </View>
-
-        <ScrollView style={styles.scrollView}>
-          {Array.from({ length: 24 }, (_, i) => (
-            <View key={i} style={styles.hourContainer}>
-              <Text style={styles.hourText}>{String(i).padStart(2, '0')}:00</Text>
-              <View style={styles.line} />
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-
-      <View style={styles.iconContainer}>
-        <TouchableOpacity style={styles.iconButton} onPress={handleAddEvent}>
-          <Image source={require('../assets/add.png')} style={styles.icon} />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.iconButton} onPress={() => setModalVisible(true)}>
-          <Image source={require('../assets/overview.png')} style={styles.icon} />
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <Image source={require('../assets/panda.png')} style={styles.pandaImage} />
+      <DateDisplay date={date} day={day} />
+      <HourlyScrollList />
+      <EventButtons
+        onAddPress={() => alert('Add new event')}
+        onOverviewPress={() => setModalVisible(true)}
+      />
+      <WeeklyModal
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.weekNavigation}>
-              <TouchableOpacity onPress={handlePreviousWeek}>
-                <Text style={styles.weekArrow}>←</Text>
-              </TouchableOpacity>
-              <Text style={styles.weekText}>{weekRange}</Text>
-              <TouchableOpacity onPress={handleNextWeek}>
-                <Text style={styles.weekArrow}>→</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.weekDays}>
-              {['Mo', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
-                <View key={index} style={styles.dayContainer}>
-                  <Text style={styles.dayText}>{day}</Text>
-                  {index === 0 && <View style={[styles.eventBlock, { backgroundColor: '#A8D5BA' }]}><Text style={styles.hourText}>10</Text></View>}
-                  {index === 1 && <View style={[styles.eventBlock, { backgroundColor: '#A3BFD9' }]}><Text style={styles.hourText}>14</Text></View>}
-                  {index === 2 && <View style={[styles.eventBlock, { backgroundColor: '#98E2A0' }]}><Text style={styles.hourText}>16</Text></View>}
-                </View>
-              ))}
-            </View>
-
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+        weekRange={weekRange}
+        onPreviousWeek={() => updateWeekRange(new Date(new Date().setDate(new Date().getDate() - 7)))}
+        onNextWeek={() => updateWeekRange(new Date(new Date().setDate(new Date().getDate() + 7)))}
+      />
     </View>
   );
 }

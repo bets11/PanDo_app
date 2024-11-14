@@ -6,7 +6,7 @@ import LoginScreen from './screens/loginScreen';
 import RegistrationScreen from './screens/registrationScreen';
 import OverviewScreen from './screens/overviewScreen';
 import Progress from './components/progress'; 
-import Plan from './components/plan';
+import Plan from './screens/plan';
 import MedicsScreen from './screens/medicsScreen';
 import Therapy from './components/therapy';
 
