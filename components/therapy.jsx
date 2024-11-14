@@ -1,20 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import GoBackButton from './common/goBackButton';
+
 
 export default function Therapy() {
-    const navigation = useNavigation();
-
-    const goBack = () => {
-        navigation.goBack();
-    };
-
     return (
         <View style={styles.container}>
             <SafeAreaView style={styles.safeArea}>
-                <TouchableOpacity onPress={goBack} style={styles.backButton}>
-                    <Text style={styles.backButtonText}>Go back...</Text>
-                </TouchableOpacity>
+                <GoBackButton />
             </SafeAreaView>
             <Text style={styles.title}>Therapy / Game</Text>
             <Text>Welcome to the Therapy/Game section!</Text>
@@ -39,15 +33,5 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         width: '100%',
-    },
-    backButton: {
-        marginTop: 10,
-        marginLeft: 10,
-        padding: 10,
-    },
-    backButtonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#000',
     },
 });
