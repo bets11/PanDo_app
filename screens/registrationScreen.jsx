@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Alert, Platform } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GoBackButton from '../components/common/goBackButton';
-import FormField from '../components/registration/FormField';
+import FormField from '../components/registration/formField';
 import DatePickerField from '../components/registration/datePickerField';
 import SubmitButton from '../components/common/submitButton';
 
@@ -45,7 +44,7 @@ export default function RegistrationScreen({ navigation }) {
       <FormField label="Height" value={height} onChangeText={setHeight} />
       <FormField label="Weight" value={weight} onChangeText={setWeight} />
       <FormField label="Condition" value={condition} onChangeText={setCondition} />
-      <SubmitButton title="Get Started" onPress={handleGetStarted} />
+      <SubmitButton title="Get Started" onPress={handleGetStarted} backgroundColor='#000000' fontColor='#FFF' />
     </View>
     </View>
     
