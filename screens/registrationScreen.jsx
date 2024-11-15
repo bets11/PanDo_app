@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Alert, Plat
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GoBackButton from '../components/common/goBackButton';
-import FormField from '../components/registration/FormField';
+import FormField from '../components/registration/formField';
 import DatePickerField from '../components/registration/datePickerField';
 import SubmitButton from '../components/common/submitButton';
 
