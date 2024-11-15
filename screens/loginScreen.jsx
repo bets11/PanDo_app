@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }) {
       <Logo />
       <InputField placeholder="E-Mail" value={email} onChangeText={setEmail} />
       <InputField placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-      <SubmitButton title="Login" onPress={handleLogin} />
+      <SubmitButton title="Login" onPress={handleLogin} backgroundColor='#000000' fontColor='#FFF' />
       <ForgotPassword />
       <SignupPrompt onPress={() => navigation.navigate('Register')} />
     </View>
