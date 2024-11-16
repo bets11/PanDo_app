@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import GameBox from '../components/therapy/gameBox';
+import CatcherGame from './catcherGame';
 
 export default function Therapy() {
     const navigation = useNavigation();
@@ -9,6 +10,8 @@ export default function Therapy() {
     const handlePress = (gameName) => {
         if (gameName === 'Memory') {
             navigation.navigate('MemoryGame');
+        } else if (gameName === 'Catcher') {
+            navigation.navigate('CatcherGame'); 
         }
     };
 

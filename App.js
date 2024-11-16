@@ -5,10 +5,10 @@ import Start from './components/start';
 import LoginScreen from './screens/loginScreen';
 import RegistrationScreen from './screens/registrationScreen';
 import OverviewScreen from './screens/overviewScreen';
-import Progress from './components/progress'; 
+import Progress from './components/progress';
 import Plan from './screens/plan';
 import MedicsScreen from './screens/medicsScreen';
-import therapyScreen from './screens/therapyScreen';
+import TherapyScreen from './screens/therapyScreen';
 import MemoryGame from './screens/MemoryGame';
 import CatcherGame from './screens/catcherGame';
 
@@ -22,12 +22,12 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegistrationScreen} />
         <Stack.Screen name="Overview" component={OverviewScreen} />
-        <Stack.Screen name="Progress" component={Progress} /> 
-        <Stack.Screen name="Plan" component={Plan}/>
-        <Stack.Screen name="Medics" component={MedicsScreen}/>
-        <Stack.Screen name="Therapy" component={therapyScreen}/>
-        <Stack.Screen name="MemoryGame" component={MemoryGame}/>
-        <Stack.Screen name="catcherGame" component={CatcherGame}/>
+        <Stack.Screen name="Progress" component={Progress} />
+        <Stack.Screen name="Plan" component={Plan} />
+        <Stack.Screen name="Medics" component={MedicsScreen} />
+        <Stack.Screen name="Therapy" component={TherapyScreen} />
+        <Stack.Screen name="MemoryGame" component={MemoryGame} />
+        <Stack.Screen name="CatcherGame" component={CatcherGame} />
       </Stack.Navigator>
     </NavigationContainer>
   );

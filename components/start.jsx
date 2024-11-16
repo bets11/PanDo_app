@@ -2,7 +2,6 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import AnimationComponent from '../components/animation/animation';
 import Timer from '../components/common/timer';
-import GoBackButton from '../components/common/goBackButton'; 
 import { useNavigation } from '@react-navigation/native';
 
 export default function Start() {
