@@ -10,6 +10,7 @@ import Plan from './screens/plan';
 import MedicsScreen from './screens/medicsScreen';
 import therapyScreen from './screens/therapyScreen';
 import MemoryGame from './screens/MemoryGame';
+import CatcherGame from './screens/catcherGame';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ export default function App() {
         <Stack.Screen name="Medics" component={MedicsScreen}/>
         <Stack.Screen name="Therapy" component={therapyScreen}/>
         <Stack.Screen name="MemoryGame" component={MemoryGame}/>
+        <Stack.Screen name="catcherGame" component={CatcherGame}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
