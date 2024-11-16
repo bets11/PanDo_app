@@ -32,7 +32,7 @@ export default function Overview() {
           style={styles.box2}
         />
         <GridButton
-          image={require('../assets/startButton.webp')}
+          image={require('../assets/games.webp')}
           label="Therapy / Game"
           onPress={() => navigation.navigate('Therapy')}
           style={styles.box3}
