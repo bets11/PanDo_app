@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, Animated } from 'react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import Timer from '../common/timer';
 
-export default function Animation({ message, imageSource, animationDuration = 4000, onAnimationEnd }) { // Setze Standardwert auf 4 Sekunden
+export default function Animation({ message, imageSource, animationDuration = 4000, onAnimationEnd }) {
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function Animation({ message, imageSource, animationDuration = 40
         <Image source={imageSource} style={styles.image} />
       </Animated.View>
       <ConfettiCannon count={50} origin={{ x: 0, y: 0 }} fadeOut={true} />
-      <Timer duration={animationDuration} onTimerEnd={onAnimationEnd} /> {/* 4-Sekunden-Timer */}
+      <Timer duration={animationDuration} onTimerEnd={onAnimationEnd} /> 
     </View>
   );
 }

@@ -8,7 +8,8 @@ import OverviewScreen from './screens/overviewScreen';
 import Progress from './components/progress'; 
 import Plan from './screens/plan';
 import MedicsScreen from './screens/medicsScreen';
-import Therapy from './components/therapy';
+import therapyScreen from './screens/therapyScreen';
+import MemoryGame from './screens/MemoryGame';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +24,8 @@ export default function App() {
         <Stack.Screen name="Progress" component={Progress} /> 
         <Stack.Screen name="Plan" component={Plan}/>
         <Stack.Screen name="Medics" component={MedicsScreen}/>
-        <Stack.Screen name="Therapy" component={Therapy}/>
+        <Stack.Screen name="Therapy" component={therapyScreen}/>
+        <Stack.Screen name="MemoryGame" component={MemoryGame}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

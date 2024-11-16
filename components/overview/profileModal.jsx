@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'flex-start', // Align to the start of the screen
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay
+    justifyContent: 'flex-start', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
   },
   modalContent: {
     width: '80%', 

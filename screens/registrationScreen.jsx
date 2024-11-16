@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Alert, Platform } from 'react-native';
+import { StyleSheet, View, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GoBackButton from '../components/common/goBackButton';
 import FormField from '../components/registration/formField';
@@ -65,5 +65,11 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: 10,
     marginBottom: 15,
-  }
+  }, 
+  pandaImage: {
+    width: 120,
+    height: 120,
+    resizeMode: 'contain', 
+    marginBottom: 20,
+  },
 });
