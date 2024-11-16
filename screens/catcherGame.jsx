@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Dimensions, Text, Image, PanResponder } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
-const catcherSize = 150;
-const elementSize = 50;
+const catcherSize = 100;
+const elementSize = 80;
 
 const CatcherGame = () => {
   const [catcherPosition, setCatcherPosition] = useState(new Animated.Value((width - catcherSize) / 2));
