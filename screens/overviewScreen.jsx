@@ -21,7 +21,7 @@ export default function Overview() {
       <View style={styles.gridContainer}>
         <GridButton
           image={require('../assets/todo.webp')}
-          label="Weekly-Planner / To-Do"
+          label="To-Do-Planner"
           onPress={() => navigation.navigate('Plan')}
           style={styles.box1}
         />

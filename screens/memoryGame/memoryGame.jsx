@@ -4,6 +4,8 @@ import Card from './card';
 import ResetButton from './resetButton';
 import GoBackButton from '../../components/common/goBackButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import progressImage from '../../assets/progress_col5.png';
+
 
 const MemoryGame = () => {
     const initialCards = [

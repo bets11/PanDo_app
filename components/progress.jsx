@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity } from 'r
 import Animation from '../components/animation/animation';
 import GoBackButton from '../components/common/goBackButton';
 
+
 export default function Progress() {
   const [showAnimation, setShowAnimation] = useState(true);
   const [currentPandaColor, setCurrentPandaColor] = useState(require('../assets/progress_col2.png')); 
