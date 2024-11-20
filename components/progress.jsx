@@ -56,12 +56,7 @@ export default function Progress() {
         <Text style={styles.pointsText}>{points}</Text>
       </View>
       </SafeAreaView>
-
-      <View style={styles.pointsContainer}>
-        <Image source={require('../assets/star.png')} style={styles.starIcon} />
-        <Text style={styles.pointsText}>{points}</Text>
-      </View>
-
+      
       {showAnimation ? (
         <Animation
           message="Great Job!"
