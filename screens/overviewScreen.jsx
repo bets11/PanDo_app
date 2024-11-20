@@ -53,7 +53,7 @@ export default function Overview() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#dffcbc',
+    backgroundColor: '#BED3A6',
     padding: 20,
   },
   title: {
