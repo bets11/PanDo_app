@@ -30,10 +30,10 @@ export default function RegistrationScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.mainContainer}>
+    <SafeAreaView style={styles.mainContainer}>
+        <GoBackButton />
       <View style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
-          <GoBackButton />
         </SafeAreaView>
 
       <Image source={require('../assets/panda.png')} style={styles.pandaImage} />
@@ -46,7 +46,7 @@ export default function RegistrationScreen({ navigation }) {
       <FormField label="Condition" value={condition} onChangeText={setCondition} />
       <SubmitButton title="Get Started" onPress={handleGetStarted} backgroundColor='#000000' fontColor='#FFF' />
     </View>
-    </View>
+    </SafeAreaView>
     
   );
 }
