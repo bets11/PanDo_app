@@ -15,7 +15,7 @@ export default function GoBackButton() {
 const styles = StyleSheet.create({
   backButton: {
     alignSelf: 'flex-start',
-    marginLeft: 15, 
+    marginLeft: 25, 
   },
   backButtonText: {
     fontSize: 16,
