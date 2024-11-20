@@ -9,7 +9,7 @@ import Progress from './components/progress';
 import Plan from './screens/plan';
 import MedicsScreen from './screens/medicsScreen';
 import TherapyScreen from './screens/therapyScreen';
-import MemoryGame from './screens/MemoryGame';
+import MemoryGame from './screens/memoryGame/memoryGame';
 import CatcherGame from './screens/catcherGame';
 import QuizGame from './screens/quizGame';
 import ShooterGame from './screens/shooterGame/shooterGame'
