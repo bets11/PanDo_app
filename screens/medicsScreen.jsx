@@ -22,7 +22,7 @@ export default function Medics() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <GoBackButton />
+        <GoBackButton screen={'Overview'}/>
       </SafeAreaView>
 
       <Text style={styles.title}>Add your medicines</Text>

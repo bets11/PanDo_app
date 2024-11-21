@@ -6,11 +6,13 @@ import LoginScreen from './screens/loginScreen';
 import RegistrationScreen from './screens/registrationScreen';
 import OverviewScreen from './screens/overviewScreen';
 import Progress from './components/progress';
-import Plan from './screens/plan';
+import Plan from './screens/planScreen';
 import MedicsScreen from './screens/medicsScreen';
 import TherapyScreen from './screens/therapyScreen';
 import MemoryGame from './screens/MemoryGame';
 import CatcherGame from './screens/catcherGame';
+import EventScreen from './screens/eventScreen';
+import EditEventScreen from './screens/editEventScreen';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +30,8 @@ export default function App() {
         <Stack.Screen name="Therapy" component={TherapyScreen} />
         <Stack.Screen name="MemoryGame" component={MemoryGame} />
         <Stack.Screen name="CatcherGame" component={CatcherGame} />
+        <Stack.Screen name="Event" component={EventScreen} />
+        <Stack.Screen name="EditEvent" component={EditEventScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

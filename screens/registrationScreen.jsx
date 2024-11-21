@@ -33,7 +33,7 @@ export default function RegistrationScreen({ navigation }) {
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
-          <GoBackButton />
+          <GoBackButton screen={'Login'}/>
         </SafeAreaView>
 
       <Image source={require('../assets/panda.png')} style={styles.pandaImage} />

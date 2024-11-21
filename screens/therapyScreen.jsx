@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import GameBox from '../components/therapy/gameBox';
+import GoBackButton from '../components/common/goBackButton';
 import CatcherGame from './catcherGame';
 
 export default function Therapy() {
@@ -17,6 +18,10 @@ export default function Therapy() {
 
     return (
         <View style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
+                <GoBackButton screen={'Overview'}/>
+             </SafeAreaView>
+
             <Text style={styles.title}>Choose your Game</Text>
             <GameBox title="Memory" onPress={() => handlePress('Memory')} />
             <GameBox title="Catcher" onPress={() => handlePress('Catcher')} />
@@ -38,5 +43,10 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 30,
+    },
+    safeArea: {
+        width: '100%',
+        paddingLeft: 10,
+        marginBottom: 10,
     },
 });

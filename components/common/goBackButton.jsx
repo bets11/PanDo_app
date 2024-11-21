@@ -2,11 +2,11 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function GoBackButton() {
+export default function GoBackButton({ screen }) {
   const navigation = useNavigation();
   
   return (
-    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+    <TouchableOpacity  style={styles.backButton} onPress={() => navigation.navigate(screen)}>
       <Text style={styles.backButtonText}>Go back</Text>
     </TouchableOpacity>
   );
