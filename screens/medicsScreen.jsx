@@ -1,70 +1,98 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, FlatList } from 'react-native';
 import GoBackButton from '../components/common/goBackButton';
-import MedicineItem from '../components/medics/medicineItem';
-import AddMedicineButton from '../components/medics/addMedicineButton';
 import MedicineModal from '../components/medics/medicineModal';
+import MedicineListItem from '../components/medics/medicineListItem';
+import AddMedicineButton from '../components/medics/addMedicineButton';
 
 export default function Medics() {
-  const [medicines, setMedicines] = useState(['Doxybene', 'Kreon']);
+  const [medicines, setMedicines] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
 
-  const toggleModal = (medicine) => {
+  const toggleModal = (medicine = null) => {
     setSelectedMedicine(medicine);
     setModalVisible(!isModalVisible);
   };
 
-  const addMedicine = () => {
-    setMedicines([...medicines, `Medicine ${medicines.length + 1}`]);
+  const saveMedicine = (medicine) => {
+    if (selectedMedicine) {
+      setMedicines((prev) =>
+        prev.map((item) =>
+          item.id === selectedMedicine.id ? { ...item, ...medicine } : item
+        )
+      );
+    } else {
+      setMedicines((prev) => [
+        ...prev,
+        { ...medicine, id: Math.random().toString() },
+      ]);
+    }
+    toggleModal();
+  };
+
+  const deleteMedicine = (id) => {
+    setMedicines((prev) => prev.filter((item) => item.id !== id));
   };
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <GoBackButton screen={'Overview'}/>
+        <View style={styles.header}>
+          <GoBackButton screen={'Overview'}/>
+          <AddMedicineButton onPress={() => toggleModal()} />
+        </View>
+
       </SafeAreaView>
-
-      <Text style={styles.title}>Add your medicines</Text>
-
-      <View style={styles.medicinesContainer}>
-        {medicines.map((medicine, index) => (
-          <MedicineItem key={index} name={medicine} onPress={toggleModal} />
-        ))}
-        <AddMedicineButton onPress={addMedicine}/>
-      </View>
-
+      <Text style={styles.title}>Track your Medicines here</Text>
+      <FlatList
+        data={medicines}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <MedicineListItem
+            medicine={item}
+            onEdit={() => toggleModal(item)}
+            onDelete={() => deleteMedicine(item.id)}
+          />
+        )}
+        ListEmptyComponent={<Text style={styles.emptyText}>No medicines added</Text>}
+      />
       <MedicineModal
         visible={isModalVisible}
-        medicineName={selectedMedicine}
-        onClose={() => setModalVisible(false)}
+        medicine={selectedMedicine}
+        onClose={toggleModal}
+        onSave={saveMedicine}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#c0e8f6',
-      padding: 20,
-    },
-    safeArea: {
-      width: '100%',
-      paddingLeft: 10,
-      marginBottom: 15,
-    },
-    title: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      marginBottom: 40,
-      marginTop: 10,
-    },
-    medicinesContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'center',
-    },
-  });
-  
+  container: {
+    flex: 1,
+    backgroundColor: '#c0e8f6',
+    padding: 20,
+  },
+  safeArea: {
+    width: '100%',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 40,
+    marginBottom: 30,
+  },
+  emptyText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#888',
+    marginTop: 20,
+  },
+});

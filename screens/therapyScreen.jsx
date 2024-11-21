@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import GameBox from '../components/therapy/gameBox';
 import GoBackButton from '../components/common/goBackButton';
 import CatcherGame from './catcherGame';
+import QuizGame from './quizGame';
+import ShooterGame from './shooterGame/shooterGame';
 
 export default function Therapy() {
     const navigation = useNavigation();
@@ -13,6 +15,10 @@ export default function Therapy() {
             navigation.navigate('MemoryGame');
         } else if (gameName === 'Catcher') {
             navigation.navigate('CatcherGame'); 
+        } else if (gameName === 'Quiz') {
+            navigation.navigate('QuizGame'); 
+        } else if (gameName === 'Shooter') {
+            navigation.navigate('ShooterGame'); 
         }
     };
 

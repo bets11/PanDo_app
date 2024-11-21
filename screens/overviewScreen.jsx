@@ -21,7 +21,7 @@ export default function Overview() {
       <View style={styles.gridContainer}>
         <GridButton
           image={require('../assets/todo.webp')}
-          label="Weekly-Planner / To-Do"
+          label="To-Do-Planner"
           onPress={() => navigation.navigate('Plan')}
           style={styles.box1}
         />
@@ -53,11 +53,11 @@ export default function Overview() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#dffcbc',
+    backgroundColor: '#BED3A6',
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 50,
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 20,
