@@ -6,6 +6,7 @@ export default function SubmitButton({ onPress, title, backgroundColor = '#000',
     <TouchableOpacity style={[styles.button, { backgroundColor }]} onPress={onPress}>
       <Text style={[styles.text, { color: fontColor }]}>{title}</Text>
     </TouchableOpacity>
+    
   );
 }
 

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, FlatList, Image } from 'react-native';
 import GoBackButton from '../components/common/goBackButton';
 import MedicineModal from '../components/medics/medicineModal';
 import MedicineListItem from '../components/medics/medicineListItem';
 import AddMedicineButton from '../components/medics/addMedicineButton';
 
+
 export default function Medics() {
   const [medicines, setMedicines] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const medicationImage = require('../assets/medication.webp'); 
 
   const toggleModal = (medicine = null) => {
     setSelectedMedicine(medicine);
@@ -43,7 +45,8 @@ export default function Medics() {
           <AddMedicineButton onPress={() => toggleModal()} />
         </View>
       </SafeAreaView>
-      <Text style={styles.title}>Track your Medicines here</Text>
+      <Text style={styles.title}>It´s medicine time!</Text>
+      <Image source={medicationImage} style={styles.pandaImage} />
       <FlatList
         data={medicines}
         keyExtractor={(item) => item.id}
@@ -93,5 +96,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
     marginTop: 20,
+  },
+  pandaImage: {
+    width: 150, 
+    height: 150,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
 });
