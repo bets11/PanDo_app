@@ -12,6 +12,7 @@ export default function FormField({ label, value, onChangeText, placeholderTextC
         placeholderTextColor={placeholderTextColor}
         value={value}
         onChangeText={onChangeText}
+        autoCapitalize="none"
       />
     </View>
   );

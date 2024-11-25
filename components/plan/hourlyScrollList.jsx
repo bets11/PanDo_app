@@ -1,77 +1,72 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  ScrollView,
   View,
   Text,
-  ScrollView,
   StyleSheet,
-  Touchable,
   TouchableOpacity,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
 
 export default function HourlyScrollList({ events, navigation }) {
   const scrollViewRef = useRef(null);
   const [currentTime, setCurrentTime] = useState("");
+  const [isLayoutReady, setIsLayoutReady] = useState(false);
 
   const calculateTopPosition = (time) => {
+    if (!time) return 0;
     const [hour, minute] = time.split(":").map(Number);
-    return hour * 60 + minute; // Total minutes since 00:00
+    return hour * 60 + minute;
   };
 
   const calculateHeight = (start, end) => {
+    if (!start || !end) return 0;
     const [startHour, startMinute] = start.split(":").map(Number);
     const [endHour, endMinute] = end.split(":").map(Number);
     const startInMinutes = startHour * 60 + startMinute;
     const endInMinutes = endHour * 60 + endMinute;
-    return endInMinutes - startInMinutes; // Duration in minutes
+    return Math.max(endInMinutes - startInMinutes, 0);
   };
 
   const getCurrentTimePosition = () => {
     const now = new Date();
-    const totalMinutes = now.getHours() * 60 + now.getMinutes();
-    return totalMinutes; // 1px per minute
+    return now.getHours() * 60 + now.getMinutes();
   };
 
   useEffect(() => {
     const updateCurrentTime = () => {
       const now = new Date();
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      setCurrentTime(`${hours}:${minutes}`);
+      setCurrentTime(
+        `${String(now.getHours()).padStart(2, "0")}:${String(
+          now.getMinutes()
+        ).padStart(2, "0")}`
+      );
     };
 
     updateCurrentTime();
-    const intervalId = setInterval(updateCurrentTime, 60000); // Update every minute
+    const intervalId = setInterval(updateCurrentTime, 60000);
 
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
+  useEffect(() => {
+    if (isLayoutReady && scrollViewRef.current) {
       const currentPosition = getCurrentTimePosition();
-      if (scrollViewRef.current) {
-        // Scroll to the current time dynamically
-        scrollViewRef.current.scrollTo({
-          y: Math.max(0, currentPosition - 150), // Ensure the offset isn't negative
-          animated: true,
-        });
-      }
-    }, [])
-  );
 
-  const shouldHideTimeLabel = (hour) => {
-    const currentTopPosition = getCurrentTimePosition();
-    const labelTopPosition = hour * 60; // Position of the hour in minutes
-    const buffer = 25; // Buffer in minutes for hiding labels
+      scrollViewRef.current.scrollTo({
+        y: Math.max(currentPosition - 100, 0),
+        animated: true,
+      });
+    }
+  }, [isLayoutReady, events]);
 
-    return (
-      currentTopPosition >= labelTopPosition - buffer &&
-      currentTopPosition <= labelTopPosition + buffer
-    );
-  };
+  const handleLayout = () => setIsLayoutReady(true);
 
   return (
-    <ScrollView style={styles.scrollView} ref={scrollViewRef}>
+    <ScrollView
+      style={styles.scrollView}
+      ref={scrollViewRef}
+      onLayout={handleLayout}
+    >
       <View style={styles.timeGrid}>
         {Array.from({ length: 48 }, (_, i) => {
           const hour = Math.floor(i / 2);
@@ -79,29 +74,30 @@ export default function HourlyScrollList({ events, navigation }) {
 
           return (
             <View key={i} style={styles.timeRow}>
-              {isFullHour && !shouldHideTimeLabel(hour) && (
-                <Text style={styles.timeLabel}>{`${String(hour).padStart(
-                  2,
-                  "0"
-                )}:00`}</Text>
+              {isFullHour && (
+                <Text style={styles.timeLabel}>
+                  {`${String(hour).padStart(2, "0")}:00`}
+                </Text>
               )}
               <View style={styles.line} />
             </View>
           );
         })}
 
+        {/* Highlight current time */}
         <View
-          style={[
-            styles.currentTimeLine,
-            { top: getCurrentTimePosition() }, // Position dynamically
-          ]}
+          style={[styles.currentTimeLine, { top: getCurrentTimePosition() }]}
         >
           <Text style={styles.currentTimeText}>{currentTime}</Text>
         </View>
 
+        {/* Render events */}
+        {events.length === 0 && (
+          <Text style={styles.noEventsText}>No events scheduled</Text>
+        )}
         {events.map((event) => {
-          const topPosition = calculateTopPosition(event.time);
-          const height = calculateHeight(event.time, event.endTime);
+          const topPosition = calculateTopPosition(event.start_time);
+          const height = calculateHeight(event.start_time, event.end_time);
 
           return (
             <TouchableOpacity
@@ -111,14 +107,13 @@ export default function HourlyScrollList({ events, navigation }) {
                 {
                   top: topPosition,
                   height: height,
-                  backgroundColor: event.color,
+                  backgroundColor: event.color || "#ccc",
                 },
               ]}
               onPress={() => navigation.navigate("Event", { event })}
             >
               <Text style={styles.eventText}>{event.type}</Text>
             </TouchableOpacity>
-
           );
         })}
       </View>
@@ -182,5 +177,11 @@ const styles = StyleSheet.create({
   eventText: {
     fontSize: 14,
     color: "#000",
+  },
+  noEventsText: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
+    color: "#888",
   },
 });

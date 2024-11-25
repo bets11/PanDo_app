@@ -5,18 +5,21 @@ import GoBackButton from '../components/common/goBackButton';
 import FormField from '../components/registration/formField';
 import DatePickerField from '../components/registration/datePickerField';
 import SubmitButton from '../components/common/submitButton';
+import { registerUser } from '../services/authService';
 
 export default function RegistrationScreen({ navigation }) {
-  const [firstName, setFirstName] = useState('');
-  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [birthdate, setBirthdate] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [condition, setCondition] = useState('');
 
 
-  const handleGetStarted = () => {
-    if (!firstName || !username || !birthdate) {
+
+  const handleGetStarted = async () => {
+    if (!fullName || !password ||!email || !birthdate) {
       Alert.alert('Error', 'Please fill in all mandatory fields');
       return;
     }
@@ -26,21 +29,32 @@ export default function RegistrationScreen({ navigation }) {
       return;
     }
 
-    navigation.navigate('Overview'); 
+    try {
+      const response = await registerUser(email, password, fullName, birthdate, height, weight, condition);
+  
+      if (response.success) {
+        console.log(response.message);
+        navigation.navigate('Overview'); 
+      } else {
+        Alert.alert('Error', response.message); 
+      }
+    } catch (error) {
+      console.error('Unexpected error during registration:', error.message);
+      Alert.alert('Error', 'Something went wrong. Please try again later.');
+    }
   };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-        <GoBackButton />
+        <GoBackButton screen={'Login'}/>
       <View style={styles.container}>
-        <SafeAreaView style={styles.safeArea}>
-          <GoBackButton screen={'Login'}/>
-        </SafeAreaView>
+        
 
       <Image source={require('../assets/panda.png')} style={styles.pandaImage} />
       
-      <FormField label="First & Last Name" value={firstName} onChangeText={setFirstName} isRequired />
-      <FormField label="Username / E-Mail" value={username} onChangeText={setUsername} isRequired />
+      <FormField label="First & Last Name" value={fullName} onChangeText={setFullName} isRequired />
+      <FormField label="E-Mail" value={email} onChangeText={setEmail} isRequired />
+      <FormField label="Password" value={password} onChangeText={setPassword} isRequired secureTextEntry />
       <DatePickerField label="Birthdate" date={birthdate} onDateChange={setBirthdate} isRequired />
       <FormField label="Height" value={height} onChangeText={setHeight} />
       <FormField label="Weight" value={weight} onChangeText={setWeight} />

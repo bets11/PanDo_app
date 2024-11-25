@@ -10,6 +10,7 @@ export default function InputField({ placeholder, value, onChangeText, secureTex
       value={value}
       onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
+      keyboardType='email-address'
       autoCapitalize="none"
     />
   );

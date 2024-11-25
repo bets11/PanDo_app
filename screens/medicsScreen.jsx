@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     width: '100%',
+
   },
   header: {
     flexDirection: 'row',

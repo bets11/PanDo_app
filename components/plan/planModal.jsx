@@ -26,10 +26,16 @@ export default function PlanModal({
     setStepWithPresetTime(2); // Move to the next step
   };
 
-  const handleSaveEvent = () => {
-    saveEvent();
+  const handleSaveEvent = async () => {
+    if (!selectedButton) {
+      Alert.alert("Please select an event before saving.");
+      return;
+    }
+    await saveEvent();
+    Alert.alert("Success", "Event saved successfully!");
     setStepWithPresetTime(1);
     setSelectedButton(null);
+    handleCloseModal();
   };
 
   const handleCloseModal = () => {

@@ -6,7 +6,9 @@ import HourlyScrollList from "../components/plan/hourlyScrollList";
 import EventButtons from "../components/plan/eventsButton";
 import WeeklyModal from "../components/plan/weeklyModal";
 import PlanModal from "../components/plan/planModal";
-import uuid from 'react-native-uuid';
+import { supabase } from "../lib/supabase";
+import { getUserUUID } from "../services/storageService";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Plan({ navigation, route }) {
   const [date, setDate] = useState("");
@@ -19,52 +21,83 @@ export default function Plan({ navigation, route }) {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    console.log("Events updated:", events);
-  }, [events]);
+    const fetchEvents = async () => {
+      const session = supabase.auth.session();
+      const userId = session?.user?.id;
+
+      if (!userId) {
+        console.error("User not logged in");
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("events")
+          .select("*")
+          .eq("user_id", userId);
+
+        if (error) {
+          console.error("Error fetching events:", error.message);
+          return;
+        }
+
+        setEvents(data || []);
+      } catch (err) {
+        console.error("Unexpected error:", err.message);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      const updatedEvent = route?.params?.updatedEvent;
-      const deletedEventId = route?.params?.deletedEventId;
-  
-      if (updatedEvent) {
-        console.log("Updated event:", updatedEvent); // Debug
-        setEvents((prevEvents) =>
-          prevEvents.map((event) =>
-            event.id === updatedEvent.id ? updatedEvent : event
-          )
-        );
-        // Clear updatedEvent after processing
-        navigation.setParams({ updatedEvent: null });
-      }
-  
-      if (deletedEventId) {
-        console.log("Deleted event ID:", deletedEventId); // Debug
-        setEvents((prevEvents) =>
-          prevEvents.filter((event) => event.id !== deletedEventId)
-        );
-        // Clear deletedEventId after processing
-        navigation.setParams({ deletedEventId: null });
-      }
-    });
-  
-    return unsubscribe;
-  }, [navigation, route?.params]);
-  
-  
+    const channel = supabase
+      .channel("events")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "events" },
+        (payload) => {
+          console.log("Change received!", payload);
+          fetchEvents(); 
+        }
+      )
+      .subscribe();
 
-
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   useEffect(() => {
     const currentDate = new Date();
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayNames = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
 
     const dayOfWeek = dayNames[currentDate.getDay()];
-    const formattedDate = `${currentDate.getDate()} ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    const formattedDate = `${currentDate.getDate()} ${
+      monthNames[currentDate.getMonth()]
+    } ${currentDate.getFullYear()}`;
 
     setDay(dayOfWeek);
     setDate(formattedDate);
@@ -72,18 +105,43 @@ export default function Plan({ navigation, route }) {
     updateWeekRange(currentDate);
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchEvents = async () => {
+        try {
+          const { data, error } = await supabase
+            .from("events")
+            .select("*")
+            .order("start_time", { ascending: true }); // Order events by start time
+
+          if (error) {
+            console.error("Error fetching events:", error.message);
+            return;
+          }
+
+          console.log("Fetched events:", data);
+          setEvents(data || []);
+        } catch (err) {
+          console.error("Unexpected error fetching events:", err.message);
+        }
+      };
+
+      fetchEvents(); 
+    }, [])
+  );
+
   const getNextHalfHour = () => {
     const now = new Date();
     let nextHour = now.getHours();
-    let nextMinute = now.getMinutes() < 30 ? '30' : '00';
+    let nextMinute = now.getMinutes() < 30 ? "30" : "00";
 
-    if (nextMinute === '00') {
+    if (nextMinute === "00") {
       nextHour += 1;
       if (nextHour === 24) nextHour = 0; // Handle midnight wrap-around
     }
 
     return {
-      startHour: String(nextHour).padStart(2, '0'),
+      startHour: String(nextHour).padStart(2, "0"),
       startMinute: nextMinute,
     };
   };
@@ -95,41 +153,59 @@ export default function Plan({ navigation, route }) {
     startOfWeek.setDate(date.getDate() - date.getDay() + 1);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-    const formatDate = (d) => `${d.getDate()}.${(d.getMonth() + 1).toString().padStart(2, '0')}.`;
+    const formatDate = (d) =>
+      `${d.getDate()}.${(d.getMonth() + 1).toString().padStart(2, "0")}.`;
 
     setWeekRange(`${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`);
   };
 
-  const saveEvent = () => {
+  const saveEvent = async () => {
+    console.log("Saving event:", selectedEvent, eventTime);
+  
     const eventColors = {
-      Therapy: '#9EB25D',
-      Medicine: '#F1DB4B',
-      Sports: '#A7C6DA',
+      Therapy: "#9EB25D",
+      Medicine: "#F1DB4B",
+      Sports: "#A7C6DA",
     };
-
-    const startTime = `${eventTime.startHour}:${eventTime.startMinute}`;
-    const endTime = `${eventTime.endHour}:${eventTime.endMinute}`;
-
-    if (!selectedEvent || !startTime || !endTime) {
-      console.error("Missing event details:", { selectedEvent, startTime, endTime });
+  
+    if (!selectedEvent || !eventTime.startHour || !eventTime.endHour) {
+      console.error("Missing event details:", { selectedEvent, eventTime });
       return;
     }
-
+  
+    // Retrieve User UUID from AsyncStorage
+    const userId = await getUserUUID();
+    if (!userId) {
+      console.error("User UUID not found. Ensure the user is logged in.");
+      return;
+    }
+  
     const newEvent = {
-      id: uuid.v4(),
       type: selectedEvent,
-      time: startTime,
-      endTime: endTime,
+      start_time: `${eventTime.startHour}:${eventTime.startMinute}:00+00`,
+      end_time: `${eventTime.endHour}:${eventTime.endMinute}:00+00`,
       color: eventColors[selectedEvent],
+      user_id: userId,
     };
-
-    setEvents([...events, newEvent]);
-    setPlanModalVisible(false);
+  
+    console.log("Prepared Event Object:", newEvent);
+  
+    try {
+      const { data, error } = await supabase.from("events").insert([newEvent]).select();
+  
+      if (error) {
+        console.error("Error saving event to Supabase:", error.message, error.details);
+        return;
+      }
+  
+      console.log("Event saved successfully:", data);
+      setEvents((prevEvents) => [...prevEvents, { ...newEvent, id: data[0]?.id }]);
+      setPlanModalVisible(false); 
+    } catch (err) {
+      console.error("Unexpected error during event saving:", err.message);
+    }
   };
 
-  const goBack = () => {
-    navigation.goBack();
-  };
   useEffect(() => {
     const nextHalfHour = getNextHalfHour();
 
@@ -145,29 +221,33 @@ export default function Plan({ navigation, route }) {
     }
 
     if (endHour >= 24) {
-      endHour = 0; 
+      endHour = 0;
     }
 
     setEventTime({
-      startHour: String(startHour).padStart(2, '0'),
-      startMinute: String(startMinute).padStart(2, '0'),
-      endHour: String(endHour).padStart(2, '0'),
-      endMinute: String(endMinute).padStart(2, '0'),
+      startHour: String(startHour).padStart(2, "0"),
+      startMinute: String(startMinute).padStart(2, "0"),
+      endHour: String(endHour).padStart(2, "0"),
+      endMinute: String(endMinute).padStart(2, "0"),
     });
   }, []);
-
-
 
   return (
     <View style={styles.mainContainer}>
       <SafeAreaView style={styles.safeArea}>
-        <GoBackButton screen={'Overview'} />
+        <GoBackButton screen={"Overview"} />
       </SafeAreaView>
 
-      <Image source={require("../assets/panda.png")} style={styles.pandaImage} />
+      <Image
+        source={require("../assets/panda.png")}
+        style={styles.pandaImage}
+      />
       <DateDisplay date={date} day={day} />
       <HourlyScrollList events={events} navigation={navigation} />
-      <EventButtons onAddPress={() => setPlanModalVisible(true)} onOverviewPress={() => setModalVisible(true)} />
+      <EventButtons
+        onAddPress={() => setPlanModalVisible(true)}
+        onOverviewPress={() => setModalVisible(true)}
+      />
       <WeeklyModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
@@ -192,8 +272,11 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   safeArea: {
+    position: "absolute",
+    top: 0,
+    left: 0,
     width: "100%",
-    marginLeft: 20,
+    padding: 10,
   },
   pandaImage: {
     width: 65,
