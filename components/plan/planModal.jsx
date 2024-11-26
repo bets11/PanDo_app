@@ -16,6 +16,7 @@ export default function PlanModal({
   eventTime,
   setEventTime,
   saveEvent,
+  selectedDate,
 }) {
   const [selectedButton, setSelectedButton] = useState(null); // State to track selected button
   const [step, setStep] = useState(1); // State to track the current step
@@ -258,7 +259,7 @@ export default function PlanModal({
             <>
               <Text style={styles.confirmationText}>
                 Selected Event: {selectedButton} from {eventTime.startHour}:
-                {eventTime.startMinute} to {eventTime.endHour}:{eventTime.endMinute}
+                {eventTime.startMinute} to {eventTime.endHour}:{eventTime.endMinute} at {selectedDate.toDateString()}
               </Text>
               <View style={styles.navigationButtons}>
                 <TouchableOpacity

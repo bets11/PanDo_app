@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, SafeAreaView } from "react-native";
+import { StyleSheet, View, Text, Image, SafeAreaView } from "react-native";
 import GoBackButton from "../components/common/goBackButton";
-import DateDisplay from "../components/plan/dateDisplay";
-import HourlyScrollList from "../components/plan/hourlyScrollList";
 import EventButtons from "../components/plan/eventsButton";
-import WeeklyModal from "../components/plan/weeklyModal";
 import PlanModal from "../components/plan/planModal";
 import { supabase } from "../lib/supabase";
 import { getUserUUID } from "../services/storageService";
-import { useFocusEffect } from "@react-navigation/native";
+import Calendar from "../components/plan/daySelecter";
 
 export default function Plan({ navigation, route }) {
-  const [date, setDate] = useState("");
-  const [day, setDay] = useState("");
-  const [weekRange, setWeekRange] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
+  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [planModalVisible, setPlanModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState("");
   const [eventTime, setEventTime] = useState({});
-  const [events, setEvents] = useState([]);
 
   useEffect(() => {
+    console.log("seletedDate", selectedDate);
     const fetchEvents = async () => {
       const session = supabase.auth.session();
       const userId = session?.user?.id;
@@ -41,7 +37,15 @@ export default function Plan({ navigation, route }) {
           return;
         }
 
-        setEvents(data || []);
+        const formattedEvents = data.map((event) => ({
+          id: event.id.toString(),
+          title: event.type,
+          start: { dateTime: event.start_time },
+          end: { dateTime: event.end_time },
+          color: event.color,
+        }));
+
+        setCalendarEvents(formattedEvents);
       } catch (err) {
         console.error("Unexpected error:", err.message);
       }
@@ -49,162 +53,6 @@ export default function Plan({ navigation, route }) {
 
     fetchEvents();
   }, []);
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("events")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "events" },
-        (payload) => {
-          console.log("Change received!", payload);
-          fetchEvents(); 
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  useEffect(() => {
-    const currentDate = new Date();
-    const dayNames = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    const dayOfWeek = dayNames[currentDate.getDay()];
-    const formattedDate = `${currentDate.getDate()} ${
-      monthNames[currentDate.getMonth()]
-    } ${currentDate.getFullYear()}`;
-
-    setDay(dayOfWeek);
-    setDate(formattedDate);
-
-    updateWeekRange(currentDate);
-  }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchEvents = async () => {
-        try {
-          const { data, error } = await supabase
-            .from("events")
-            .select("*")
-            .order("start_time", { ascending: true }); // Order events by start time
-
-          if (error) {
-            console.error("Error fetching events:", error.message);
-            return;
-          }
-
-          console.log("Fetched events:", data);
-          setEvents(data || []);
-        } catch (err) {
-          console.error("Unexpected error fetching events:", err.message);
-        }
-      };
-
-      fetchEvents(); 
-    }, [])
-  );
-
-  const getNextHalfHour = () => {
-    const now = new Date();
-    let nextHour = now.getHours();
-    let nextMinute = now.getMinutes() < 30 ? "30" : "00";
-
-    if (nextMinute === "00") {
-      nextHour += 1;
-      if (nextHour === 24) nextHour = 0; // Handle midnight wrap-around
-    }
-
-    return {
-      startHour: String(nextHour).padStart(2, "0"),
-      startMinute: nextMinute,
-    };
-  };
-
-  const updateWeekRange = (date) => {
-    const startOfWeek = new Date(date);
-    const endOfWeek = new Date(date);
-
-    startOfWeek.setDate(date.getDate() - date.getDay() + 1);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-
-    const formatDate = (d) =>
-      `${d.getDate()}.${(d.getMonth() + 1).toString().padStart(2, "0")}.`;
-
-    setWeekRange(`${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`);
-  };
-
-  const saveEvent = async () => {
-    console.log("Saving event:", selectedEvent, eventTime);
-  
-    const eventColors = {
-      Therapy: "#9EB25D",
-      Medicine: "#F1DB4B",
-      Sports: "#A7C6DA",
-    };
-  
-    if (!selectedEvent || !eventTime.startHour || !eventTime.endHour) {
-      console.error("Missing event details:", { selectedEvent, eventTime });
-      return;
-    }
-  
-    // Retrieve User UUID from AsyncStorage
-    const userId = await getUserUUID();
-    if (!userId) {
-      console.error("User UUID not found. Ensure the user is logged in.");
-      return;
-    }
-  
-    const newEvent = {
-      type: selectedEvent,
-      start_time: `${eventTime.startHour}:${eventTime.startMinute}:00+00`,
-      end_time: `${eventTime.endHour}:${eventTime.endMinute}:00+00`,
-      color: eventColors[selectedEvent],
-      user_id: userId,
-    };
-  
-    console.log("Prepared Event Object:", newEvent);
-  
-    try {
-      const { data, error } = await supabase.from("events").insert([newEvent]).select();
-  
-      if (error) {
-        console.error("Error saving event to Supabase:", error.message, error.details);
-        return;
-      }
-  
-      console.log("Event saved successfully:", data);
-      setEvents((prevEvents) => [...prevEvents, { ...newEvent, id: data[0]?.id }]);
-      setPlanModalVisible(false); 
-    } catch (err) {
-      console.error("Unexpected error during event saving:", err.message);
-    }
-  };
 
   useEffect(() => {
     const nextHalfHour = getNextHalfHour();
@@ -232,6 +80,77 @@ export default function Plan({ navigation, route }) {
     });
   }, []);
 
+  const saveEvent = async () => {
+    console.log("Selected Date before saving:", selectedDate);
+    console.log("Saving event:", selectedEvent, eventTime);
+
+    const eventColors = {
+      Therapy: "#9EB25D",
+      Medicine: "#F1DB4B",
+      Sports: "#A7C6DA",
+    };
+
+    if (!selectedEvent || !eventTime.startHour || !eventTime.endHour) {
+      console.error("Missing event details:", { selectedEvent, eventTime });
+      return;
+    }
+
+    const eventDate = selectedDate.toISOString().split("T")[0];
+
+    const newEvent = {
+      type: selectedEvent,
+      start_time: `${eventDate}T${eventTime.startHour}:${eventTime.startMinute}:00+00`,
+      end_time: `${eventDate}T${eventTime.endHour}:${eventTime.endMinute}:00+00`,
+      color: eventColors[selectedEvent],
+      user_id: await getUserUUID(),
+    };
+
+    try {
+      const { data, error } = await supabase
+        .from("events")
+        .insert([newEvent])
+        .select();
+
+      if (error) {
+        console.error("Error saving event:", error.message, error.details);
+        return;
+      }
+
+      // Add to CalendarContainer events format
+      const formattedEvent = {
+        id: data[0]?.id.toString(),
+        title: selectedEvent,
+        start: { dateTime: newEvent.start_time },
+        end: { dateTime: newEvent.end_time },
+        color: newEvent.color,
+      };
+
+      setCalendarEvents((prevEvents) => [...prevEvents, formattedEvent]); // Add to calendar events
+      setPlanModalVisible(false); // Close the modal
+    } catch (err) {
+      console.error("Unexpected error during event saving:", err.message);
+    }
+  };
+
+  const getNextHalfHour = () => {
+    const now = new Date();
+    let nextHour = now.getHours();
+    let nextMinute = now.getMinutes() < 30 ? "30" : "00";
+
+    if (nextMinute === "00") {
+      nextHour += 1;
+      if (nextHour === 24) nextHour = 0; // Handle midnight wrap-around
+    }
+
+    return {
+      startHour: String(nextHour).padStart(2, "0"),
+      startMinute: nextMinute,
+    };
+  };
+
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate);
+  };
   return (
     <View style={styles.mainContainer}>
       <SafeAreaView style={styles.safeArea}>
@@ -242,16 +161,15 @@ export default function Plan({ navigation, route }) {
         source={require("../assets/panda.png")}
         style={styles.pandaImage}
       />
-      <DateDisplay date={date} day={day} />
-      <HourlyScrollList events={events} navigation={navigation} />
+
+      {/* Header with selected date */}
+      <Calendar style={styles.header} setSelectedDate={setSelectedDate} events={calendarEvents}>
+        {selectedDate.toDateString()}
+      </Calendar>
+
       <EventButtons
         onAddPress={() => setPlanModalVisible(true)}
         onOverviewPress={() => setModalVisible(true)}
-      />
-      <WeeklyModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        weekRange={weekRange}
       />
       <PlanModal
         modalVisible={planModalVisible}
@@ -260,7 +178,9 @@ export default function Plan({ navigation, route }) {
         eventTime={eventTime}
         setEventTime={setEventTime}
         saveEvent={saveEvent}
+        selectedDate={selectedDate}
       />
+      
     </View>
   );
 }
@@ -283,5 +203,12 @@ const styles = StyleSheet.create({
     height: 65,
     alignSelf: "center",
     marginBottom: 20,
+    marginTop: 30,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
   },
 });
