@@ -17,13 +17,13 @@ export default function PlanModal({
   setEventTime,
   saveEvent,
 }) {
-  const [selectedButton, setSelectedButton] = useState(null); // State to track selected button
-  const [step, setStep] = useState(1); // State to track the current step
+  const [selectedButton, setSelectedButton] = useState(null);
+  const [step, setStep] = useState(1); 
 
   const handleSelectEvent = (event) => {
-    setSelectedButton(event); // Update the selected button state
-    selectEvent(event); // Call the external `selectEvent` function
-    setStepWithPresetTime(2); // Move to the next step
+    setSelectedButton(event); 
+    selectEvent(event); 
+    setStepWithPresetTime(2); 
   };
 
   const handleSaveEvent = async () => {
@@ -41,7 +41,6 @@ export default function PlanModal({
   const handleCloseModal = () => {
     const nextHalfHour = getNextHalfHour();
   
-    // Ensure the end time is set 30 minutes after the start time
     const startHour = parseInt(nextHalfHour.startHour, 10);
     const startMinute = parseInt(nextHalfHour.startMinute, 10);
   
@@ -81,7 +80,7 @@ export default function PlanModal({
   
     if (nextMinute === '00') {
       nextHour = nextHour + 1;
-      if (nextHour === 24) nextHour = 0; // Handle midnight wrap-around
+      if (nextHour === 24) nextHour = 0;
     }
   
     return {
@@ -139,14 +138,13 @@ export default function PlanModal({
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Plan your day!</Text>
 
-          {/* Step 1: Event Selection */}
           {step === 1 && (
             <>
               <View style={styles.eventRow}>
                 <TouchableOpacity
                   style={[
                     styles.eventButton,
-                    { backgroundColor: "#9EB25D" },
+                    { backgroundColor: "#C1E1DC" },
                     selectedButton === "Therapy" && styles.selectedEventButton,
                   ]}
                   onPress={() => handleSelectEvent("Therapy")}
@@ -159,7 +157,7 @@ export default function PlanModal({
                 <TouchableOpacity
                   style={[
                     styles.eventButton,
-                    { backgroundColor: "#F1DB4B" },
+                    { backgroundColor: "#FFCCAC" },
                     selectedButton === "Medicine" && styles.selectedEventButton,
                   ]}
                   onPress={() => handleSelectEvent("Medicine")}
@@ -172,7 +170,7 @@ export default function PlanModal({
                 <TouchableOpacity
                   style={[
                     styles.eventButton,
-                    { backgroundColor: "#A7C6DA" },
+                    { backgroundColor: "#FDD475" },
                     selectedButton === "Sports" && styles.selectedEventButton,
                   ]}
                   onPress={() => handleSelectEvent("Sports")}
@@ -183,7 +181,6 @@ export default function PlanModal({
             </>
           )}
 
-          {/* Step 2: Time Input */}
           {step === 2 && (
             <>
               <Text style={styles.timeSelectionTitle}>Set Start Time:</Text>
@@ -239,13 +236,13 @@ export default function PlanModal({
               <View style={styles.navigationButtons}>
                 <TouchableOpacity
                   style={styles.navigationButton}
-                  onPress={() => setStepWithPresetTime(1)} // Go back to event selection
+                  onPress={() => setStepWithPresetTime(1)} 
                 >
                   <Text style={styles.navigationButtonText}>Back</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.navigationButton}
-                  onPress={() => setStepWithPresetTime(3, true)} // Proceed to the save step
+                  onPress={() => setStepWithPresetTime(3, true)} 
                 >
                   <Text style={styles.navigationButtonText}>Next</Text>
                 </TouchableOpacity>
@@ -253,7 +250,6 @@ export default function PlanModal({
             </>
           )}
 
-          {/* Step 3: Save Event */}
           {step === 3 && (
             <>
               <Text style={styles.confirmationText}>
@@ -276,8 +272,6 @@ export default function PlanModal({
               </View>
             </>
           )}
-
-          {/* Close Button (Always Visible) */}
           <TouchableOpacity
             style={styles.cancelButton}
             onPress={handleCloseModal}
@@ -358,7 +352,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   navigationButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#a8bfe7",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -371,7 +365,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   saveButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#98ac6f",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -383,11 +377,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cancelButton: {
-    backgroundColor: "#f44336",
+    backgroundColor: "#F66257",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: "80%",
+    width: "30%",
     alignItems: "center",
     marginTop: 10,
   },

@@ -173,7 +173,6 @@ export default function Plan({ navigation, route }) {
       return;
     }
   
-    // Retrieve User UUID from AsyncStorage
     const userId = await getUserUUID();
     if (!userId) {
       console.error("User UUID not found. Ensure the user is logged in.");
@@ -282,6 +281,7 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: 5,
+    marginTop: 60,
   },
 });
