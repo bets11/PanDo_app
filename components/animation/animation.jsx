@@ -15,26 +15,36 @@ export default function Animation({ message, imageSource, animationDuration = 40
   }, [scaleAnim]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>{message}</Text>
-      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-        <Image source={imageSource} style={styles.image} />
-      </Animated.View>
-      <ConfettiCannon count={50} origin={{ x: 0, y: 0 }} fadeOut={true} />
-      <Timer duration={animationDuration} onTimerEnd={onAnimationEnd} /> 
+    <View style={styles.outerContainer}>
+      <View style={styles.innerContainer}>
+        <Text style={styles.text}>{message}</Text>
+        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+          <Image source={imageSource} style={styles.image} />
+        </Animated.View>
+      </View>
+      <ConfettiCannon count={50} origin={{ x: 200, y: 0 }} fadeOut={true} />
+      <Timer duration={animationDuration} onTimerEnd={onAnimationEnd} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
+  outerContainer: {
     justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  innerContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
   text: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   image: {
     width: 150,

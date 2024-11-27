@@ -13,10 +13,12 @@ export default function Start() {
 
   return (
     <View style={styles.container}>
+       <View style={{justifyContent: 'center', alignItems: 'center', width: '100%' }}>
       <AnimationComponent 
         message="Welcome Back!"
         imageSource={require('../assets/panda.png')}
       />
+      </View>
       <Timer duration={5000} onTimerEnd={handleTimerEnd} />
     </View>
   );
