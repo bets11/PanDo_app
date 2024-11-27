@@ -51,7 +51,7 @@ export default function Progress() {
   return (
     <View style={[styles.container, !showAnimation && styles.orangeBackground]}>
       <SafeAreaView style={styles.safeArea}>
-        <GoBackButton />
+        <GoBackButton screen={'Overview'}/>
          <View style={styles.pointsContainer}>
         <Image source={require('../assets/star.png')} style={styles.starIcon} />
         <Text style={styles.pointsText}>{points}</Text>

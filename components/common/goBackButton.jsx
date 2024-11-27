@@ -1,24 +1,29 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function GoBackButton() {
+const GoBackButton = () => {
   const navigation = useNavigation();
-  
+
   return (
-    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-      <Text style={styles.backButtonText}>Go back</Text>
+    <TouchableOpacity
+      style={styles.backButton}
+      onPress={() => navigation.goBack()} 
+    >
+      <Image source={require('../../assets/goBack.png')} style={styles.backIcon} />
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   backButton: {
-    alignSelf: 'flex-start',
-    marginLeft: 25, 
+    padding: 10,
   },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  backIcon: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
   },
 });
+
+export default GoBackButton;
