@@ -6,9 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { supabase } from "../lib/supabase";
+import EditDatePickerField from "../components/editDatePickerFiled";
+import GoBackButton from "../components/common/goBackButton";
 
 const eventColors = {
   Therapy: "#9EB25D",
@@ -21,20 +24,40 @@ export default function EventScreen({ route, navigation }) {
 
   const [updatedEvent, setUpdatedEvent] = useState({
     ...event,
-    start_time: event.start_time.slice(0, 5), // Format to HH:MM
-    end_time: event.end_time.slice(0, 5), // Format to HH:MM
+    date: event?.start?.dateTime?.slice(0, 10) || "", // Extract date in YYYY-MM-DD format
+    start_time: event?.start?.dateTime?.slice(11, 16) || "", // Extract time in HH:MM format
+    end_time: event?.end?.dateTime?.slice(11, 16) || "", // Extract time in HH:MM format
   });
 
-  const handleSave = async () => {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false); // Hide the date picker
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+      const day = String(selectedDate.getDate()).padStart(2, "0");
+      setUpdatedEvent((prev) => ({ ...prev, date: `${year}-${month}-${day}` }));
+    }
+  };
+
+  const handleUpdate = async () => {
     try {
-      const updatedColor = eventColors[updatedEvent.type] || event.color;
+      const updatedColor = eventColors[updatedEvent.type] || updatedEvent.color;
+
+      console.log("Updated Event:", updatedEvent);
+      const startTimestamp = `${updatedEvent.date}T${updatedEvent.start_time}:00.00Z`
+      const endTimestamp = `${updatedEvent.date}T${updatedEvent.end_time}:00.00Z`
+
+      console.log("Updated Start Time:", startTimestamp);
+      console.log("Updated End Time:", endTimestamp);
 
       const { data, error } = await supabase
         .from("events")
         .update({
           type: updatedEvent.type,
-          start_time: `${updatedEvent.start_time}:00+00`, // Add seconds and timezone
-          end_time: `${updatedEvent.end_time}:00+00`,
+          start_time: startTimestamp,
+          end_time: endTimestamp,
           color: updatedColor,
         })
         .eq("id", updatedEvent.id);
@@ -48,8 +71,14 @@ export default function EventScreen({ route, navigation }) {
       console.log("Event updated successfully:", data);
       Alert.alert("Success", "Event updated successfully.");
 
-      // Pass the updated event back to the Plan screen
-      navigation.navigate("Plan", { updatedEvent: { ...updatedEvent, color: updatedColor } });
+      navigation.navigate("Plan", {
+        updatedEvent: {
+          ...updatedEvent,
+          start: { dateTime: startTimestamp },
+          end: { dateTime: endTimestamp },
+          color: updatedColor,
+        },
+      });
     } catch (err) {
       console.error("Unexpected error during event update:", err.message);
       Alert.alert("Error", "An unexpected error occurred.");
@@ -58,7 +87,10 @@ export default function EventScreen({ route, navigation }) {
 
   const handleDelete = async () => {
     try {
-      const { data, error } = await supabase.from("events").delete().eq("id", event.id);
+      const { data, error } = await supabase
+        .from("events")
+        .delete()
+        .eq("id", event.id);
 
       if (error) {
         console.error("Error deleting event:", error.message);
@@ -69,7 +101,6 @@ export default function EventScreen({ route, navigation }) {
       console.log("Event deleted successfully:", data);
       Alert.alert("Success", "Event deleted successfully.");
 
-      // Pass the deleted event ID back to the Plan screen
       navigation.navigate("Plan", { deletedEventId: event.id });
     } catch (err) {
       console.error("Unexpected error during event deletion:", err.message);
@@ -80,7 +111,9 @@ export default function EventScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Edit Event</Text>
-
+      <SafeAreaView style={styles.safeArea}>
+        <GoBackButton screen={"Plan"} />
+      </SafeAreaView>
       {/* Event Type Dropdown */}
       <Text style={styles.label}>Event Type:</Text>
       <View style={styles.pickerContainer}>
@@ -90,12 +123,21 @@ export default function EventScreen({ route, navigation }) {
             setUpdatedEvent((prev) => ({ ...prev, type: itemValue }))
           }
         >
-          <Picker.Item label="Select Event Type" value="" />
           <Picker.Item label="Therapy" value="Therapy" />
           <Picker.Item label="Medicine" value="Medicine" />
           <Picker.Item label="Sports" value="Sports" />
         </Picker>
       </View>
+
+      <EditDatePickerField
+        label="Date"
+        value={updatedEvent.date} // Pass the current date from state
+        onChange={(newDate) =>
+          setUpdatedEvent((prev) => ({ ...prev, date: newDate }))
+        }
+        minimumDate={new Date(2020, 0, 1)} // Optional minimum date
+        maximumDate={new Date(2030, 11, 31)} // Optional maximum date
+      />
 
       {/* Start Time Input */}
       <Text style={styles.label}>Start Time:</Text>
@@ -119,7 +161,8 @@ export default function EventScreen({ route, navigation }) {
         }
       />
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+      {/* Save and Delete Buttons */}
+      <TouchableOpacity style={styles.saveButton} onPress={handleUpdate}>
         <Text style={styles.saveButtonText}>Save Changes</Text>
       </TouchableOpacity>
 
@@ -135,12 +178,20 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  safeArea: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    padding: 10,
+  },
   title: {
     fontSize: 26,
     fontWeight: "bold",
     color: "#333",
     textAlign: "center",
     marginBottom: 30,
+    marginTop: 40,
   },
   label: {
     fontSize: 16,
@@ -162,6 +213,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 16,
     backgroundColor: "#fff",
+  },
+  dateButton: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#666",
   },
   saveButton: {
     backgroundColor: "#4CAF50",

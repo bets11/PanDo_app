@@ -5,6 +5,8 @@ import ResetButton from './resetButton';
 import GoBackButton from '../../components/common/goBackButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import progressImage from '../../assets/progress_col5.png';
+import { savePointsToUser } from '../../services/pointsService';
+import { getUserUUID } from '../../services/storageService';
 
 
 const MemoryGame = () => {
@@ -65,7 +67,9 @@ const MemoryGame = () => {
       setSelectedCards([]);
     };
   
-    const resetGame = () => {
+    const resetGame = async () => {
+      const userId = await getUserUUID();
+      savePointsToUser(userId, 50);
       setCards(shuffle(initialCards.map(card => ({ ...card, flipped: false, matched: false }))));
       setMatches(0);
       setSelectedCards([]);
@@ -73,7 +77,7 @@ const MemoryGame = () => {
   
     return (
         <SafeAreaView style={styles.background}>
-          <GoBackButton />
+          <GoBackButton screen={"Overview"}/>
           <View style={styles.container}>
             {cards.map((card, index) => (
               <Card key={index} card={card} index={index} onPress={flipCard} />

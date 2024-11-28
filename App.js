@@ -12,12 +12,13 @@ import TherapyScreen from './screens/therapyScreen';
 import MemoryGame from './screens/memoryGame/memoryGame';
 import CatcherGame from './screens/catcherGame';
 import EventScreen from './screens/eventScreen';
-import EditEventScreen from './screens/editEventScreen';
 import QuizGame from './screens/quizGame';
 import ShooterGame from './screens/shooterGame/shooterGame'
 
 
+
 const Stack = createStackNavigator();
+
 
 export default function App() {
   return (
@@ -34,7 +35,6 @@ export default function App() {
         <Stack.Screen name="MemoryGame" component={MemoryGame} />
         <Stack.Screen name="CatcherGame" component={CatcherGame} />
         <Stack.Screen name="Event" component={EventScreen} />
-        <Stack.Screen name="EditEvent" component={EditEventScreen} />
         <Stack.Screen name="QuizGame" component={QuizGame} />
         <Stack.Screen name="ShooterGame" component={ShooterGame} />
       </Stack.Navigator>

@@ -3,6 +3,8 @@ import { View, StyleSheet, Dimensions, PanResponder, Text, Button, TouchableWith
 import Paddle from './paddle';
 import Ball from './ball';
 import Brick from './brick';
+import { savePointsToUser } from '../../services/pointsService';
+import { getUserUUID } from '../../services/storageService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -117,7 +119,9 @@ const ShooterGame = () => {
     setGameState('playing');
   };
 
-  const resetGame = () => {
+  const resetGame = async () => {
+    const userId = await getUserUUID();
+    savePointsToUser(userId, score);
     setGameState('start');
     setScore(0);
     setLives(3);
@@ -126,6 +130,7 @@ const ShooterGame = () => {
     setBallVelocity({ x: 0, y: 0 });
     setIsStartButtonPressed(false);
   };
+
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>

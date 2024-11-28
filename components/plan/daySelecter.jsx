@@ -4,7 +4,7 @@ import {
     CalendarHeader,
   } from "@howljs/calendar-kit";
   import React, { useCallback } from "react";
-  import { View, Text } from "react-native";
+  import { View, Text, TouchableOpacity } from "react-native";
   import Icon from "react-native-vector-icons/Ionicons";
   
   const customTheme = {
@@ -17,7 +17,7 @@ import {
     },
   };
   
-  const Calendar = ({ setSelectedDate, events }) => {
+  const Calendar = ({ setSelectedDate, events, navigation, view }) => {
   
     const handleScroll = (newDate) => {
       console.log("New Date:", newDate);
@@ -26,6 +26,9 @@ import {
     };
   
     const renderEvent = useCallback((event) => (
+      <TouchableOpacity
+        onPress={() => {handleEventClick(event)}}
+      >
       <View
         style={{
           width: "100%",
@@ -37,14 +40,21 @@ import {
         <Icon name="calendar" size={10} color="white" />
         <Text style={{ color: "white", fontSize: 10 }}>{event.title}</Text>
       </View>
+      </TouchableOpacity>
     ), []);
-  
+
+    const handleEventClick = (event) => {
+      navigation.navigate("Event", { event });
+    }
+
+    
     return (
       <CalendarContainer
         theme={customTheme}
-        numberOfDays={1}
+        numberOfDays={view}
         onChange={handleScroll}
-        events={events} // Pass the events here
+        events={events}
+        timeZone="UTC"
       >
         <CalendarHeader />
         <CalendarBody renderEvent={renderEvent} />

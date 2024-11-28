@@ -1,39 +1,94 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import Animation from '../components/animation/animation';
 import GoBackButton from '../components/common/goBackButton';
-
+import { getPointsFromUser, updateUserPoints } from '../services/pointsService';
 
 export default function Progress() {
   const [showAnimation, setShowAnimation] = useState(true);
   const [currentPandaColor, setCurrentPandaColor] = useState(require('../assets/progress_col2.png')); 
   const [points, setPoints] = useState(0); 
 
+  const colorCosts = {
+    blue: 150,
+    green: 120,
+    yellow: 200,
+    red: 100,
+  };
+
+  useEffect(() => {
+    const fetchPoints = async () => {
+      try {
+        const userPoints = await getPointsFromUser(); 
+        if (userPoints !== null) {
+          setPoints(userPoints);
+        } else {
+          console.error("Could not fetch user points");
+        }
+      } catch (error) {
+        console.error("Error fetching user points:", error.message);
+      }
+    };
+
+    fetchPoints(); // Fetch points when the component mounts
+  }, []);
+
   const handleAnimationEnd = () => {
     setShowAnimation(false);
   };
 
-  const handleColorChange = (color) => {
-    let newColor;
-    switch (color) {
-      case 'blue':
-        newColor = require('../assets/progress_col2.png');
-        break;
-      case 'green':
-        newColor = require('../assets/progress_col3.png');
-        break;
-      case 'yellow':
-        newColor = require('../assets/progress_col4.png');
-        break;
-      case 'red':
-        newColor = require('../assets/progress_col5.png');
-        break;
-      default:
-        newColor = currentPandaColor;
-        break;
+  const handleColorChange = async (color) => {
+    const cost = colorCosts[color];
+    if (points >= cost) {
+      Alert.alert(
+        "Confirm Purchase",
+        `This color costs ${cost} points. Do you want to purchase it?`,
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: async () => {
+              try {
+                const newPoints = points - cost;
+                await updateUserPoints(newPoints); // Update points in the database
+                setPoints(newPoints); // Update points locally
+
+                // Change the panda color
+                let newColor;
+                switch (color) {
+                  case 'blue':
+                    newColor = require('../assets/progress_col2.png');
+                    break;
+                  case 'green':
+                    newColor = require('../assets/progress_col3.png');
+                    break;
+                  case 'yellow':
+                    newColor = require('../assets/progress_col4.png');
+                    break;
+                  case 'red':
+                    newColor = require('../assets/progress_col5.png');
+                    break;
+                  default:
+                    return;
+                }
+                setCurrentPandaColor(newColor);
+                Alert.alert("Purchase Successful", `You have successfully purchased the ${color} color!`);
+              } catch (error) {
+                console.error("Error updating points:", error.message);
+                Alert.alert("Error", "Failed to update points. Please try again.");
+              }
+            },
+          },
+        ]
+      );
+    } else {
+      Alert.alert("Insufficient Points", "You do not have enough points to buy this color.");
     }
-    setCurrentPandaColor(newColor);
   };
+
 
   const getShadowColor = () => {
     if (currentPandaColor === require('../assets/progress_col2.png')) {

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Dimensions, Text, Image, PanResponder } from 'react-native';
+import { savePointsToUser } from '../services/pointsService';
+import { getUserUUID } from '../services/storageService';
 
 const { width, height } = Dimensions.get('window');
 const catcherSize = 100;
@@ -32,7 +34,9 @@ const CatcherGame = () => {
     return () => clearInterval(interval);
   }, [gameOver]);
 
-  const resetGame = () => {
+  const resetGame = async () => {
+    const userId = await getUserUUID();
+    savePointsToUser(userId, score);
     setScore(0);
     setErrors(0);
     setElements([]);

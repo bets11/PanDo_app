@@ -245,30 +245,6 @@ export default function PlanModal({
                   <Text style={styles.navigationButtonText}>Back</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.navigationButton}
-                  onPress={() => setStepWithPresetTime(3, true)} // Proceed to the save step
-                >
-                  <Text style={styles.navigationButtonText}>Next</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-
-          {/* Step 3: Save Event */}
-          {step === 3 && (
-            <>
-              <Text style={styles.confirmationText}>
-                Selected Event: {selectedButton} from {eventTime.startHour}:
-                {eventTime.startMinute} to {eventTime.endHour}:{eventTime.endMinute} at {selectedDate.toDateString()}
-              </Text>
-              <View style={styles.navigationButtons}>
-                <TouchableOpacity
-                  style={styles.navigationButton}
-                  onPress={() => setStepWithPresetTime(2)} 
-                >
-                  <Text style={styles.navigationButtonText}>Back</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
                   style={styles.saveButton}
                   onPress={handleSaveEvent}
                 >

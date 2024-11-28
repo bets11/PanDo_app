@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { getUserUUID } from '../services/storageService';
+import { savePointsToUser } from '../services/pointsService';
 
 const allQuestions = [
   { question: 'What color is the sky?', options: ['Green', 'Blue', 'Red', 'Yellow'], answer: 1 },
@@ -66,7 +68,9 @@ const QuizGame = () => {
     }, 400);
   };
 
-  const handleRestart = () => {
+  const handleRestart = async () => {
+    const userId = await getUserUUID();
+    savePointsToUser(userId, score);
     setScore(0);
     setCurrentQuestion(0);
     setSelectedOption(null);
