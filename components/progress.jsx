@@ -105,21 +105,22 @@ export default function Progress() {
 
   return (
     <View style={[styles.container, !showAnimation && styles.orangeBackground]}>
-      <SafeAreaView style={styles.safeArea}>
-        <GoBackButton screen={'Overview'}/>
-         <View style={styles.pointsContainer}>
+    <SafeAreaView style={styles.safeArea}>
+      <GoBackButton screen={'Overview'} />
+      <View style={styles.pointsContainer}>
         <Image source={require('../assets/star.png')} style={styles.starIcon} />
         <Text style={styles.pointsText}>{points}</Text>
       </View>
-      </SafeAreaView>
-      
-      {showAnimation ? (
-        <Animation
-          message="Great Job!"
-          imageSource={require('../assets/panda.png')}
-          animationDuration={4000}
-          onAnimationEnd={handleAnimationEnd}
-        />
+    </SafeAreaView>
+    {showAnimation ? (
+  <View style={{justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+    <Animation
+      message="Great Job!"
+      imageSource={require('../assets/panda.png')}
+      animationDuration={4000}
+      onAnimationEnd={handleAnimationEnd}
+    />
+  </View>
       ) : (
         <>
           <Text style={styles.progressText}>PanDo</Text>
@@ -236,5 +237,3 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
 });
-
-
