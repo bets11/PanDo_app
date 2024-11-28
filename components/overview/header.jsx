@@ -6,7 +6,7 @@ export default function Header({ onProfilePress }) {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.profileButton} onPress={onProfilePress}>
-          <Image source={require('../../assets/panda.png')} style={styles.profileImage} />
+          <Image source={require('../../assets/pandaProfil.png')} style={styles.profileImage} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>

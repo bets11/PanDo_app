@@ -16,7 +16,7 @@ export default function Start() {
        <View style={{justifyContent: 'center', alignItems: 'center', width: '100%' }}>
       <AnimationComponent 
         message="Welcome Back!"
-        imageSource={require('../assets/panda.png')}
+        imageSource={require('../assets/progress.webp')}
       />
       </View>
       <Timer duration={5000} onTimerEnd={handleTimerEnd} />

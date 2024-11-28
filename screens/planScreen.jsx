@@ -41,7 +41,6 @@ export default function Plan({ navigation, route }) {
   
       console.log("Fetched events:", data);
   
-      // Format fetched events for the calendar
       const formattedEvents = data.map((event) => {
         const startUTC = new Date(event.start_time).toISOString().split(".")[0] + "Z";
         const endUTC = new Date(event.end_time).toISOString().split(".")[0] + "Z";
@@ -118,8 +117,8 @@ export default function Plan({ navigation, route }) {
   
     const newEvent = {
       type: selectedEvent,
-      start_time: `${eventDate}T${eventTime.startHour}:${eventTime.startMinute}:00Z`, // UTC time
-      end_time: `${eventDate}T${eventTime.endHour}:${eventTime.endMinute}:00Z`, // UTC time
+      start_time: `${eventDate}T${eventTime.startHour}:${eventTime.startMinute}:00Z`, 
+      end_time: `${eventDate}T${eventTime.endHour}:${eventTime.endMinute}:00Z`, 
       color: eventColors[selectedEvent],
       user_id: await getUserUUID(),
     };
@@ -135,7 +134,6 @@ export default function Plan({ navigation, route }) {
         return;
       }
   
-      // Add to calendar events
       const formattedEvent = {
         id: data[0]?.id.toString(),
         title: selectedEvent,
@@ -152,8 +150,6 @@ export default function Plan({ navigation, route }) {
     }
   };
   
-  
-
   const getNextHalfHour = () => {
     const now = new Date();
     let nextHour = now.getHours();
@@ -161,7 +157,7 @@ export default function Plan({ navigation, route }) {
 
     if (nextMinute === "00") {
       nextHour += 1;
-      if (nextHour === 24) nextHour = 0; // Handle midnight wrap-around
+      if (nextHour === 24) nextHour = 0; 
     }
 
     return {
@@ -182,13 +178,11 @@ export default function Plan({ navigation, route }) {
       <SafeAreaView style={styles.safeArea}>
         <GoBackButton screen={"Overview"} />
       </SafeAreaView>
-
       <Image
-        source={require("../assets/panda.png")}
+        source={require("../assets/todo.webp")}
         style={styles.pandaImage}
       />
 
-      {/* Header with selected date */}
       <Calendar style={styles.header}
         setSelectedDate={setSelectedDate}
         events={calendarEvents}
@@ -217,8 +211,6 @@ export default function Plan({ navigation, route }) {
         onSelect={handleViewSelection}
         selectedView={selectedView}
       />
-
-      
     </View>
   );
 }

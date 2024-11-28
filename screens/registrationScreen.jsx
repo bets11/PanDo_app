@@ -50,7 +50,7 @@ export default function RegistrationScreen({ navigation }) {
       <View style={styles.container}>
         
 
-      <Image source={require('../assets/panda.png')} style={styles.pandaImage} />
+      <Image source={require('../assets/profile_col2.png')} style={styles.pandaImage} />
       
       <FormField label="First & Last Name" value={fullName} onChangeText={setFullName} isRequired />
       <FormField label="E-Mail" value={email} onChangeText={setEmail} isRequired />

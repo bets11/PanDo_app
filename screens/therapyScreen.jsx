@@ -1,10 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import GameBox from '../components/therapy/gameBox';
 import GoBackButton from '../components/common/goBackButton';
-import CatcherGame from './catcherGame';
-
 
 export default function Therapy() {
     const navigation = useNavigation();
@@ -23,8 +21,12 @@ export default function Therapy() {
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <GoBackButton screen={'Overview'}/>
+            <GoBackButton screen={'Overview'} />
             <View style={styles.container}>
+                <Image 
+                    source={require('../assets/games.webp')} 
+                    style={styles.image} 
+                />
                 <Text style={styles.title}>Choose your Game</Text>
                 <GameBox title="Memory" onPress={() => handlePress('Memory')} />
                 <GameBox title="Catcher" onPress={() => handlePress('Catcher')} />
@@ -42,6 +44,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#f7d9c4',
         padding: 20,
+        marginBottom:150,
     },
     title: {
         fontSize: 24,
@@ -51,5 +54,11 @@ const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
         backgroundColor: '#f7d9c4',
+    },
+    image: {
+        width: 250, 
+        height: 250, 
+        resizeMode: 'contain', 
+        marginLeft: 50,
     },
 });

@@ -30,7 +30,7 @@ export default function Progress() {
       }
     };
 
-    fetchPoints(); // Fetch points when the component mounts
+    fetchPoints(); 
   }, []);
 
   const handleAnimationEnd = () => {
@@ -53,10 +53,9 @@ export default function Progress() {
             onPress: async () => {
               try {
                 const newPoints = points - cost;
-                await updateUserPoints(newPoints); // Update points in the database
-                setPoints(newPoints); // Update points locally
+                await updateUserPoints(newPoints); 
+                setPoints(newPoints); 
 
-                // Change the panda color
                 let newColor;
                 switch (color) {
                   case 'blue':
@@ -116,7 +115,7 @@ export default function Progress() {
   <View style={{justifyContent: 'center', alignItems: 'center', width: '100%' }}>
     <Animation
       message="Great Job!"
-      imageSource={require('../assets/panda.png')}
+      imageSource={require('../assets/progress.webp')}
       animationDuration={4000}
       onAnimationEnd={handleAnimationEnd}
     />

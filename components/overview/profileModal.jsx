@@ -1,33 +1,24 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Image,
-  ActivityIndicator,
-} from "react-native";
+import {View,Text,TouchableOpacity,StyleSheet,Modal,Image,ActivityIndicator,} from "react-native";
 import { supabase } from "../../lib/supabase";
 import { getUserUUID } from "../../services/storageService";
 
 export default function ProfileModal({ visible, onClose }) {
-  const [profile, setProfile] = useState(null); // State for profile data
-  const [email, setEmail] = useState(null); // State for email
-  const [loading, setLoading] = useState(false); // State for loading
+  const [profile, setProfile] = useState(null); 
+  const [email, setEmail] = useState(null); 
+  const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
     if (visible) {
-      fetchProfileData(); // Fetch profile data when the modal is visible
+      fetchProfileData(); 
     }
   }, [visible]);
 
   const fetchProfileData = async () => {
     setLoading(true);
     try {
-      const userId = await getUserUUID(); // Get the logged-in user's ID
+      const userId = await getUserUUID(); 
 
-      // Fetch profile data from the `profiles` table
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("*")
@@ -40,7 +31,6 @@ export default function ProfileModal({ visible, onClose }) {
         setProfile(profileData);
       }
 
-      // Fetch email from the `users` table
       const { data, error: userError } = await supabase.auth.getUser();
 
       if (userError) {

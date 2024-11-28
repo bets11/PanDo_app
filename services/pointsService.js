@@ -4,7 +4,6 @@ import { getUserUUID } from "./storageService";
 export const savePointsToUser = async (userId, pointsToAdd) => {
     console.log("Starting to save points to user...");
   try {
-    // Fetch the current points of the user
     const { data: userData, error: fetchError } = await supabase
       .from("profiles") 
       .select("points")
@@ -15,7 +14,6 @@ export const savePointsToUser = async (userId, pointsToAdd) => {
 
     const currentPoints = userData.points || 0;
 
-    // Update the user's points
     const { error: updateError } = await supabase
       .from("profiles")
       .update({ points: currentPoints + pointsToAdd })

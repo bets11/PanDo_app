@@ -49,18 +49,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.2)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.2)", 
   },
   modalContainer: {
     backgroundColor: "#fff",
     width: "30%",
-    marginTop: 50, // Adjust the position from the top of the screen
+    marginTop: 50, 
     borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5, // For Android shadow
+    elevation: 5, 
   },
   option: {
     paddingVertical: 15,

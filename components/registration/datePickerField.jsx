@@ -1,35 +1,23 @@
 import React, { useState } from "react";
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Platform,
-  View,
-  Button,
-} from "react-native";
+import {TouchableOpacity,Text,StyleSheet,Platform,View,Button,} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-export default function DatePickerField({
-  label,
-  date,
-  onDateChange,
-  isRequired = false,
-}) {
+export default function DatePickerField({label,date,onDateChange,isRequired = false,}) {
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [tempDate, setTempDate] = useState(date || new Date(2000, 0, 1)); // Temporary date state
+  const [tempDate, setTempDate] = useState(date || new Date(2000, 0, 1)); 
 
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
-      setTempDate(selectedDate); // Update the temporary date without closing the picker
+      setTempDate(selectedDate); 
     }
     if (Platform.OS !== "ios") {
-      setShowDatePicker(false); // Automatically close picker on Android
+      setShowDatePicker(false); 
     }
   };
 
   const handleConfirm = () => {
-    setShowDatePicker(false); // Close the picker
-    onDateChange(tempDate); // Confirm the selected date
+    setShowDatePicker(false); 
+    onDateChange(tempDate); 
   };
 
   return (
@@ -55,7 +43,6 @@ export default function DatePickerField({
             minimumDate={new Date(1980, 0, 1)}
             maximumDate={new Date()}
           />
-          {/* Confirm Button for iOS */}
           {Platform.OS === "ios" && (
             <View style={styles.confirmButtonContainer}>
               <Button title="Confirm" onPress={handleConfirm} />

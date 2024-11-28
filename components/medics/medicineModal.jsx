@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-na
 import * as ImagePicker from 'expo-image-picker';
 import InputField from '../common/inputField';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
-import PandaSetting from '../../assets/pandaSetting.png'; 
+import { uploadImage, deleteImage, listImages } from '../../services/imageService';
 
 export default function MedicineModal({ visible, medicine, onClose, onSave }) {
   const [name, setName] = useState('');
@@ -24,10 +24,23 @@ export default function MedicineModal({ visible, medicine, onClose, onSave }) {
     }
   }, [visible, medicine]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name.trim()) return alert('Please enter medicine name');
     if (!amount.trim()) return alert('Please enter amount');
-    onSave({ name, amount, image: imageUri });
+  
+    let imageUrl = imageUri;
+  
+    if (imageUri) {
+      try {
+        const userId = 'user-id-from-auth'; 
+        imageUrl = await uploadImage(imageUri, userId);
+      } catch (error) {
+        console.error('Error uploading image:', error.message);
+        return alert('Failed to upload image. Please try again.');
+      }
+    }
+  
+    onSave({ name, amount, image: imageUrl });
   };
 
   const takePhoto = async () => {
