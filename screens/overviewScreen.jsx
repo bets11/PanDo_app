@@ -1,51 +1,94 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/overview/header';
-import GridButton from '../components/overview/gridButton';
 import ProfileModal from '../components/overview/profileModal';
+import { supabase } from '../lib/supabase';
+import { getUserUUID } from '../services/storageService';
 
 export default function Overview() {
   const navigation = useNavigation();
-  const [isProfileVisible, setProfileVisible] = useState(false);
+  const [name, setName] = useState('');
+  const [isProfileVisible, setProfileVisible] = useState(false); 
 
+  useEffect(() => {
+    fetchUserName();
+  }, []);
+
+  const fetchUserName = async () => {
+    try {
+      const userId = await getUserUUID();
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching name:', error.message);
+      } else {
+        setName(profile.full_name || 'Guest');
+      }
+    } catch (err) {
+      console.error('Unexpected error fetching name:', err.message);
+    }
+  };
+
+  const Button = ({ image, label, onPress, color }) => (
+    <View style={styles.buttonContainer}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: color }]}
+        onPress={onPress}
+        activeOpacity={0.8}
+      >
+        <Image source={image} style={styles.icon} />
+      </TouchableOpacity>
+      <Text style={styles.buttonLabel}>{label}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       <SafeAreaView>
-        <Header onProfilePress={() => setProfileVisible(true)} />
+        <TouchableOpacity style={styles.headerIcon} onPress={() => setProfileVisible(true)}>
+          <Image source={require('../assets/pandaProfil.png')} style={styles.profileIcon} />
+        </TouchableOpacity>
       </SafeAreaView>
 
-      <Text style={styles.title}>PANDO</Text>
+      <Text style={styles.greeting}>Hello,</Text>
+      <Text style={styles.name}>{name}!</Text>
 
       <View style={styles.gridContainer}>
-        <GridButton
+        <Button
           image={require('../assets/todo.webp')}
           label="To-Do-Planner"
           onPress={() => navigation.navigate('Plan')}
-          style={styles.box1}
+          color="#FFF6BA"
         />
-        <GridButton
+        <Button
           image={require('../assets/medication.webp')}
-          label="Medics - Tracker"
+          label="Medics-Tracker"
           onPress={() => navigation.navigate('Medics')}
-          style={styles.box2}
+          color="#D6F2FD"
         />
-        <GridButton
+        <Button
           image={require('../assets/games.webp')}
-          label="Therapy / Game"
+          label="Games/Therapy"
           onPress={() => navigation.navigate('Therapy')}
-          style={styles.box3}
+          color="#f7d9c4"
         />
-        <GridButton
+        <Button
           image={require('../assets/progress.webp')}
           label="Progress"
           onPress={() => navigation.navigate('Progress')}
-          style={styles.box4}
+          color="#f9cf9c"
         />
       </View>
 
-      <ProfileModal visible={isProfileVisible} onClose={() => setProfileVisible(false)} />
+      <ProfileModal
+        visible={isProfileVisible}
+        onClose={() => setProfileVisible(false)}
+      />
     </View>
   );
 }
@@ -53,33 +96,72 @@ export default function Overview() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#BED3A6',
+    backgroundColor: '#C8DBC0',
     padding: 20,
+    paddingTop: 60,
   },
-  title: {
-    fontSize: 50,
+  greeting: {
+    fontSize: 40,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 20,
+    textAlign: 'left',
+    marginTop: 110, 
+    marginLeft: 25,
+  },
+  name: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginLeft: 25,
   },
   gridContainer: {
+    marginTop: 90, 
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',  
+    justifyContent: 'space-evenly',
+  },
+  buttonContainer: {
     alignItems: 'center',
-    marginTop: 100,
+    marginBottom: 40,
+    width: '45%',
   },
-  box1: {
-    backgroundColor: '#f6fcbc',
+  button: {
+    width: 140,
+    height: 140,
+    borderRadius: 85,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
-  box2: {
-    backgroundColor: '#c0e8f6',
+  icon: {
+    width: 95,
+    height: 95,
   },
-  box3: {
-    backgroundColor: '#f7d9c4',
+  buttonLabel: {
+    fontSize: 17,
+    textAlign: 'center',
+    marginTop: 8,
   },
-  box4: {
-    backgroundColor: '#f9cf9c',
+  headerIcon: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  profileIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
 });
-
