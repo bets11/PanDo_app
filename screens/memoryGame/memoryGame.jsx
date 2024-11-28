@@ -92,8 +92,6 @@ const MemoryGame = () => {
     background: {
         flex: 1,
         backgroundColor: '#a3afc0',
-        justifyContent: 'center',
-        alignItems: 'center',
       },
     container: {
       flexDirection: 'row',

@@ -1,64 +1,123 @@
-import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Image } from 'react-native';
+import React, { useRef } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, FlatList, Dimensions, Animated, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import GameBox from '../components/therapy/gameBox';
 import GoBackButton from '../components/common/goBackButton';
+import PlayButton from '../components/therapy/playButton';
+
+const { width } = Dimensions.get('window');
 
 export default function Therapy() {
     const navigation = useNavigation();
+    const scrollX = useRef(new Animated.Value(0)).current;
 
-    const handlePress = (gameName) => {
-        if (gameName === 'Memory') {
-            navigation.navigate('MemoryGame');
-        } else if (gameName === 'Catcher') {
-            navigation.navigate('CatcherGame'); 
-        } else if (gameName === 'Quiz') {
-            navigation.navigate('QuizGame'); 
-        } else if (gameName === 'Shooter') {
-            navigation.navigate('ShooterGame'); 
-        }
+    const games = [
+        { id: '1', name: 'Memory', screen: 'MemoryGame', color: '#A0BDC7', image: require('../assets/memoryImageTherapy.png') },
+        { id: '2', name: 'Catcher', screen: 'CatcherGame', color: '#CBDFBD', image: require('../assets/pandaImageTherapy.png') },
+        { id: '3', name: 'Quiz', screen: 'QuizGame', color: '#A8AF71', image: require('../assets/quizImageTherapy.png') },
+        { id: '4', name: 'Shooter', screen: 'ShooterGame', color: '#D68b79', image: require('../assets/shooterImageTherapy.png') },
+    ];
+
+    const handlePress = (screen) => {
+        navigation.navigate(screen);
+    };
+
+    const renderGameBlock = ({ item, index }) => {
+        const inputRange = [(index - 1) * (width * 0.7 + 20), index * (width * 0.7 + 20), (index + 1) * (width * 0.7 + 20)];
+        
+        const scale = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.9, 1.1, 0.9],
+            extrapolate: 'clamp',
+        });
+
+        return (
+            <Animated.View
+                style={[styles.blockContainer, { transform: [{ scale }] }]}
+            >
+                <View style={[styles.block, { backgroundColor: item.color }]}>
+                    <Text style={styles.blockText}>{item.name}</Text>
+                    <Image source={item.image} style={styles.image} />
+                    <PlayButton onPress={() => handlePress(item.screen)} />
+                </View>
+            </Animated.View>
+        );
     };
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <GoBackButton screen={'Overview'} />
+            <GoBackButton />
             <View style={styles.container}>
-                <Image 
-                    source={require('../assets/games.webp')} 
-                    style={styles.image} 
-                />
                 <Text style={styles.title}>Choose your Game</Text>
-                <GameBox title="Memory" onPress={() => handlePress('Memory')} />
-                <GameBox title="Catcher" onPress={() => handlePress('Catcher')} />
-                <GameBox title="Quiz" onPress={() => handlePress('Quiz')} />
-                <GameBox title="Shooter" onPress={() => handlePress('Shooter')} />
+                <Animated.FlatList
+                    data={games}
+                    renderItem={renderGameBlock}
+                    keyExtractor={(item) => item.id}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    snapToAlignment="center"
+                    snapToInterval={width * 0.7 + 20}
+                    decelerationRate="fast"
+                    contentContainerStyle={styles.flatListContainer}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                        { useNativeDriver: false }
+                    )}
+                />
             </View>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#F6F4D2',
+    },
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f7d9c4',
-        padding: 20,
-        marginBottom:150,
+        paddingLeft: 10, 
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 30,
+        marginBottom: -10,
     },
-    safeArea: {
-        flex: 1,
-        backgroundColor: '#f7d9c4',
+    flatListContainer: {
+        alignItems: 'center',
+        paddingHorizontal: 10,
+    },
+    blockContainer: {
+        width: width * 0.7, 
+        marginHorizontal: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    block: {
+        width: '100%',
+        height: 550, 
+        borderRadius: 20,
+        alignItems: 'center', 
+        justifyContent: 'flex-start', 
+        paddingTop: 20,
+        paddingHorizontal: 15, 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+    },
+    blockText: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#000000',
+        marginTop: 40,
     },
     image: {
-        width: 250, 
-        height: 250, 
-        resizeMode: 'contain', 
-        marginLeft: 50,
+        width: 420,
+        height: 220,
+        resizeMode: 'contain',
+        marginTop: 50,
+
     },
-});
+}); 
