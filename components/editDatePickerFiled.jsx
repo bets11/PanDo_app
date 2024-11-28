@@ -4,7 +4,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function EditDatePickerField({ label, value, onChange, minimumDate, maximumDate, isRequired = false }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [tempDate, setTempDate] = useState(value ? new Date(value) : new Date()); // Temporary date for selection
+  const [tempDate, setTempDate] = useState(value ? new Date(value) : new Date()); 
 
   const handleConfirm = () => {
     const year = tempDate.getFullYear();
@@ -12,8 +12,8 @@ export default function EditDatePickerField({ label, value, onChange, minimumDat
     const day = String(tempDate.getDate()).padStart(2, "0");
     const formattedDate = `${year}-${month}-${day}`;
 
-    onChange(formattedDate); // Update the date in the parent component
-    setShowDatePicker(false); // Close the picker
+    onChange(formattedDate); 
+    setShowDatePicker(false); 
   };
 
   return (
@@ -23,7 +23,7 @@ export default function EditDatePickerField({ label, value, onChange, minimumDat
       </Text>
       <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
         <Text style={{ color: value ? "#000" : "#888" }}>
-          {value || "YYYY-MM-DD"} {/* Display the selected date or placeholder */}
+          {value || "YYYY-MM-DD"} 
         </Text>
       </TouchableOpacity>
       {showDatePicker && (
@@ -35,7 +35,7 @@ export default function EditDatePickerField({ label, value, onChange, minimumDat
                 mode="date"
                 display={Platform.OS === "ios" ? "spinner" : "default"}
                 onChange={(event, selectedDate) => {
-                  if (selectedDate) setTempDate(selectedDate); // Update tempDate while user selects
+                  if (selectedDate) setTempDate(selectedDate);
                 }}
                 minimumDate={minimumDate || new Date(1980, 0, 1)}
                 maximumDate={maximumDate || new Date()}

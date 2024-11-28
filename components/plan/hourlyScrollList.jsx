@@ -84,14 +84,12 @@ export default function HourlyScrollList({ events, navigation }) {
           );
         })}
 
-        {/* Highlight current time */}
         <View
           style={[styles.currentTimeLine, { top: getCurrentTimePosition() }]}
         >
           <Text style={styles.currentTimeText}>{currentTime}</Text>
         </View>
 
-        {/* Render events */}
         {events.length === 0 && (
           <Text style={styles.noEventsText}>No events scheduled</Text>
         )}
@@ -132,12 +130,12 @@ const styles = StyleSheet.create({
   },
   timeGrid: {
     position: "relative",
-    height: 1440, // 24 hours * 60 minutes
+    height: 1440, 
   },
   timeRow: {
     flexDirection: "row",
     alignItems: "center",
-    height: 30, // 30-minute intervals
+    height: 30,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },

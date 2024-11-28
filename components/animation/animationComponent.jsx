@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import Animation from '../components/animation'; // Komponente für die Spritesheet-Animation
+import Animation from '../components/animation';
 
 export default function AnimationComponent({ message, spritesheet, frameWidth, frameHeight, totalFrames, duration }) {
   return (
@@ -8,10 +8,10 @@ export default function AnimationComponent({ message, spritesheet, frameWidth, f
       <Text style={styles.message}>{message}</Text>
       <Animation
         spritesheet={require('./assets/spritesheet.png')}
-        frameWidth={200} // Breite eines Frames
-        frameHeight={500} // Höhe eines Frames
-        totalFrames={4} // Anzahl der Frames
-        duration={2000} // Dauer für eine komplette Animation
+        frameWidth={200} 
+        frameHeight={500} 
+        totalFrames={4} 
+        duration={2000} 
       />
       
     </View>

@@ -24,15 +24,15 @@ export default function EventScreen({ route, navigation }) {
 
   const [updatedEvent, setUpdatedEvent] = useState({
     ...event,
-    date: event?.start?.dateTime?.slice(0, 10) || "", // Extract date in YYYY-MM-DD format
-    start_time: event?.start?.dateTime?.slice(11, 16) || "", // Extract time in HH:MM format
-    end_time: event?.end?.dateTime?.slice(11, 16) || "", // Extract time in HH:MM format
+    date: event?.start?.dateTime?.slice(0, 10) || "", 
+    start_time: event?.start?.dateTime?.slice(11, 16) || "", 
+    end_time: event?.end?.dateTime?.slice(11, 16) || "", 
   });
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false); // Hide the date picker
+    setShowDatePicker(false);
     if (selectedDate) {
       const year = selectedDate.getFullYear();
       const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
@@ -114,7 +114,6 @@ export default function EventScreen({ route, navigation }) {
       <SafeAreaView style={styles.safeArea}>
         <GoBackButton screen={"Plan"} />
       </SafeAreaView>
-      {/* Event Type Dropdown */}
       <Text style={styles.label}>Event Type:</Text>
       <View style={styles.pickerContainer}>
         <Picker
@@ -131,15 +130,14 @@ export default function EventScreen({ route, navigation }) {
 
       <EditDatePickerField
         label="Date"
-        value={updatedEvent.date} // Pass the current date from state
+        value={updatedEvent.date} 
         onChange={(newDate) =>
           setUpdatedEvent((prev) => ({ ...prev, date: newDate }))
         }
-        minimumDate={new Date(2020, 0, 1)} // Optional minimum date
-        maximumDate={new Date(2030, 11, 31)} // Optional maximum date
+        minimumDate={new Date(2020, 0, 1)} 
+        maximumDate={new Date(2030, 11, 31)} 
       />
 
-      {/* Start Time Input */}
       <Text style={styles.label}>Start Time:</Text>
       <TextInput
         style={styles.input}
@@ -150,7 +148,6 @@ export default function EventScreen({ route, navigation }) {
         }
       />
 
-      {/* End Time Input */}
       <Text style={styles.label}>End Time:</Text>
       <TextInput
         style={styles.input}
@@ -161,7 +158,6 @@ export default function EventScreen({ route, navigation }) {
         }
       />
 
-      {/* Save and Delete Buttons */}
       <TouchableOpacity style={styles.saveButton} onPress={handleUpdate}>
         <Text style={styles.saveButtonText}>Save Changes</Text>
       </TouchableOpacity>
