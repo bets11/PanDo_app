@@ -1,23 +1,39 @@
 import React, { useState, useEffect } from "react";
-import {View,Text,TouchableOpacity,StyleSheet,Modal,Image,ActivityIndicator,} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Image, ActivityIndicator, Animated, Dimensions } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { getUserUUID } from "../../services/storageService";
 
+const { width } = Dimensions.get("window");
+
 export default function ProfileModal({ visible, onClose }) {
-  const [profile, setProfile] = useState(null); 
-  const [email, setEmail] = useState(null); 
-  const [loading, setLoading] = useState(false); 
+  const [profile, setProfile] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const translateX = useState(new Animated.Value(-width))[0]; 
 
   useEffect(() => {
     if (visible) {
-      fetchProfileData(); 
+      fetchProfileData();
+      Animated.timing(translateX, {
+        toValue: 0, 
+        duration: 600, 
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(translateX, {
+        toValue: -width, 
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        setProfile(null); 
+      });
     }
   }, [visible]);
 
   const fetchProfileData = async () => {
     setLoading(true);
     try {
-      const userId = await getUserUUID(); 
+      const userId = await getUserUUID();
 
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
@@ -38,8 +54,6 @@ export default function ProfileModal({ visible, onClose }) {
       } else {
         setEmail(data.user.email);
       }
-      console.log("Fetched profile:", profileData);
-      console.log("Fetched email:", data.user.email);
     } catch (err) {
       console.error("Unexpected error fetching profile:", err.message);
     } finally {
@@ -48,14 +62,14 @@ export default function ProfileModal({ visible, onClose }) {
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}
-    >
+    <Modal transparent visible={visible} animationType="none">
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+        <Animated.View
+          style={[
+            styles.modalContent,
+            { transform: [{ translateX }] }, 
+          ]}
+        >
           {loading ? (
             <ActivityIndicator size="large" color="#000" />
           ) : (
@@ -74,7 +88,7 @@ export default function ProfileModal({ visible, onClose }) {
                     {email || "Email not set"}
                   </Text>
                   <Text style={styles.profileText}>
-                    {profile.birthdate.split("-").reverse().join(".")}
+                    {profile.birthdate?.split("-").reverse().join(".")}
                   </Text>
                   <Text style={styles.profileText}>
                     {profile.illness || ""}
@@ -84,16 +98,14 @@ export default function ProfileModal({ visible, onClose }) {
                   </Text>
                 </>
               ) : (
-                <Text style={styles.profileText}>
-                  No profile data available
-                </Text>
+                <Text style={styles.profileText}>No profile data available</Text>
               )}
               <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
             </>
           )}
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -102,24 +114,25 @@ export default function ProfileModal({ visible, onClose }) {
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-start",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "80%",
-    height: "100%",
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: "80%", 
     backgroundColor: "#fdfdf0",
     padding: 20,
     borderRightWidth: 1,
     borderColor: "#000",
-    alignItems: "left",
+    justifyContent: "flex-start",
   },
   profileImageLarge: {
     width: 150,
     height: 150,
     borderRadius: 100,
-    marginLeft: 70,
+    alignSelf: "center",
     borderWidth: 1,
     marginBottom: 20,
     borderColor: "#000",
@@ -129,9 +142,9 @@ const styles = StyleSheet.create({
   profileTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    textAlign: "left",
-    marginBottom: 10,
-    marginTop: 50,
+    textAlign: "center",
+    marginBottom: 40,
+    marginTop: 20,
   },
   profileText: {
     fontSize: 20,
@@ -145,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     width: "40%",
-    alignSelf: "left",
+    alignSelf: "center",
   },
   closeButtonText: {
     fontSize: 20,
