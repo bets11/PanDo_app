@@ -99,9 +99,9 @@ export default function Plan({ navigation, route }) {
 
   const saveEvent = async () => {
     const eventColors = {
-      Therapy: "#9EB25D",
-      Medicine: "#F1DB4B",
-      Sports: "#A7C6DA",
+      Therapy: "#C1E1DC",
+      Medicine: "#FFCCAC",
+      Sports: "#FDD475",
     };
   
     if (!selectedEvent || !eventTime.startHour || !eventTime.endHour) {
@@ -229,11 +229,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   pandaImage: {
-    width: 65,
-    height: 65,
+    width: 45,
+    height: 45,
     alignSelf: "center",
-    marginBottom: 20,
-    marginTop: 30,
+    marginBottom: 15,
+    marginTop: 70,
   },
   header: {
     fontSize: 20,

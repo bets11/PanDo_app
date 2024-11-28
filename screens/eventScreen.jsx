@@ -14,9 +14,9 @@ import EditDatePickerField from "../components/editDatePickerFiled";
 import GoBackButton from "../components/common/goBackButton";
 
 const eventColors = {
-  Therapy: "#9EB25D",
-  Medicine: "#F1DB4B",
-  Sports: "#A7C6DA",
+  Therapy: "#C1E1DC",
+  Medicine: "#FFCCAC",
+  Sports: "#FDD475",
 };
 
 export default function EventScreen({ route, navigation }) {
