@@ -13,12 +13,12 @@ const MemoryGame = () => {
     const initialCards = [
       { id: 1, value: require('../../assets/panda1.png'), flipped: false, matched: false },
       { id: 2, value: require('../../assets/panda1.png'), flipped: false, matched: false },
-      { id: 3, value: require('../../assets/panda2.png'), flipped: false, matched: false },
-      { id: 4, value: require('../../assets/panda2.png'), flipped: false, matched: false },
+      { id: 3, value: require('../../assets/progress.webp'), flipped: false, matched: false },
+      { id: 4, value: require('../../assets/progress.webp'), flipped: false, matched: false },
       { id: 5, value: require('../../assets/panda3.png'), flipped: false, matched: false },
       { id: 6, value: require('../../assets/panda3.png'), flipped: false, matched: false },
-      { id: 7, value: require('../../assets/panda4.png'), flipped: false, matched: false },
-      { id: 8, value: require('../../assets/panda4.png'), flipped: false, matched: false },
+      { id: 7, value: require('../../assets/fallingPanda.png'), flipped: false, matched: false },
+      { id: 8, value: require('../../assets/fallingPanda.png'), flipped: false, matched: false },
       { id: 9, value: require('../../assets/katze.png'), flipped: false, matched: false },
       { id: 10, value: require('../../assets/katze.png'), flipped: false, matched: false },
       { id: 11, value: require('../../assets/pandaProfil.png'), flipped: false, matched: false },
@@ -100,7 +100,7 @@ const MemoryGame = () => {
       alignItems: 'center',
       width: 300,
       margin: 'auto',
-      marginTop: 200, 
+      marginTop: 170, 
     },
   });
 
