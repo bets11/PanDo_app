@@ -42,17 +42,17 @@ export default function Plan({ navigation, route }) {
       console.log("Fetched events:", data);
   
       const formattedEvents = data.map((event) => {
-        const startUTC = new Date(event.start_time).toISOString().split(".")[0] + "Z";
-        const endUTC = new Date(event.end_time).toISOString().split(".")[0] + "Z";
+        const startLocal = new Date(event.start_time).toISOString().replace("Z", ""); // Local time
+        const endLocal = new Date(event.end_time).toISOString().replace("Z", ""); // Local time
   
-        console.log("Start UTC:", startUTC);
-        console.log("End UTC:", endUTC);
+        console.log("Start Local:", startLocal);
+        console.log("End Local:", endLocal);
   
         return {
           id: event.id.toString(),
           title: event.type,
-          start: { dateTime: startUTC },
-          end: { dateTime: endUTC },
+          start: { dateTime: startLocal },
+          end: { dateTime: endLocal },
           color: event.color,
         };
       });
@@ -63,6 +63,7 @@ export default function Plan({ navigation, route }) {
       console.error("Unexpected error during event fetching:", err.message);
     }
   };
+
   
   useFocusEffect(
     useCallback(() => {
