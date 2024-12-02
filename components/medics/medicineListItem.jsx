@@ -6,7 +6,7 @@ export default function MedicineListItem({ medicine, onEdit, onDelete }) {
     <View style={styles.itemContainer}>
       {medicine.image && (
         <Image
-          source={{ uri: medicine.image }}
+          source={{ uri: medicine.imaage_url }}
           style={styles.medicineImage}
         />
       )}

@@ -22,8 +22,9 @@ export default function Overview() {
         .from('profiles')
         .select('full_name')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
+      console.log('profile', profile);
       if (error) {
         console.error('Error fetching name:', error.message);
       } else {

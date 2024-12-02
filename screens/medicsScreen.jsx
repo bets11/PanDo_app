@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, FlatList, Image } from 'react-native';
 import GoBackButton from '../components/common/goBackButton';
 import MedicineModal from '../components/medics/medicineModal';
 import MedicineListItem from '../components/medics/medicineListItem';
 import AddMedicineButton from '../components/medics/addMedicineButton';
+import { supabase } from '../lib/supabase';
+import { getUserUUID } from '../services/storageService';
 
 
 export default function Medics() {
@@ -12,26 +14,71 @@ export default function Medics() {
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const medicationImage = require('../assets/medication.webp'); 
 
+  const fetchMedicines = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('medications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      console.log('Data:', data);
+      if (error) {
+        console.error('Error fetching medicines:', error.message);
+      } else {
+        setMedicines(data || []);
+      }
+    } catch (error) {
+      console.error('Unexpected error fetching medicines:', error.message);
+    }
+  }
+
+  useEffect(() => {
+    fetchMedicines();
+    console.log('Medicines:', medicines);
+  }, []);
+
   const toggleModal = (medicine = null) => {
     setSelectedMedicine(medicine);
     setModalVisible(!isModalVisible);
   };
 
-  const saveMedicine = (medicine) => {
-    if (selectedMedicine) {
-      setMedicines((prev) =>
-        prev.map((item) =>
-          item.id === selectedMedicine.id ? { ...item, ...medicine } : item
-        )
-      );
-    } else {
-      setMedicines((prev) => [
-        ...prev,
-        { ...medicine, id: Math.random().toString() },
-      ]);
+  const saveMedicine = async (medicine) => {
+    console.log('Saving medicine:', medicine);
+
+    try {
+      const userId = await getUserUUID();
+  
+      const { data, error } = await supabase
+        .from('medications')
+        .insert({
+          user_id: userId,
+          name: medicine.name,
+          amount: medicine.amount,
+          image_url: medicine.image, 
+        })
+        .select();
+  
+      if (error) {
+        console.error('Error saving medicine to database:', error.message);
+        alert('Failed to save medicine. Please try again.');
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        console.error('No data returned after insert.');
+        alert('Failed to save medicine. Please try again.');
+        return;
+      }
+  
+      setMedicines((prev) => [data[0], ...prev]);
+    } catch (err) {
+      console.error('Unexpected error saving medicine:', err.message);
+      alert('Failed to save medicine. Please try again.');
     }
+  
     toggleModal();
   };
+  
 
   const deleteMedicine = (id) => {
     setMedicines((prev) => prev.filter((item) => item.id !== id));
