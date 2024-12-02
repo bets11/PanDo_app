@@ -51,3 +51,41 @@ export const uploadImage = async (uri, userId) => {
     throw err;
   }
 };
+
+export const deleteMedicine = async (imageUrl, medicineId) => {
+  try {
+    // Extract filename from signed URL
+    const matches = imageUrl.match(/medicines\/(.*?)\?token=/);
+    if (!matches || !matches[1]) {
+      throw new Error('Invalid image URL format');
+    }
+    const fileName = matches[1];
+
+    // Delete image from storage
+    const { error: storageError } = await supabase.storage
+      .from('medicines')
+      .remove([fileName]);
+
+    if (storageError) {
+      console.error('Error deleting image:', storageError.message);
+      throw storageError;
+    }
+
+    // Delete medicine record from database
+    const { error: dbError } = await supabase
+      .from('medications')
+      .delete()
+      .eq('id', medicineId);
+
+    if (dbError) {
+      console.error('Error deleting medicine record:', dbError.message);
+      throw dbError;
+    }
+
+    return { success: true };
+
+  } catch (error) {
+    console.error('Delete operation failed:', error.message);
+    throw error;
+  }
+};

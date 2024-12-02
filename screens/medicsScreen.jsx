@@ -6,6 +6,7 @@ import MedicineListItem from '../components/medics/medicineListItem';
 import AddMedicineButton from '../components/medics/addMedicineButton';
 import { supabase } from '../lib/supabase';
 import { getUserUUID } from '../services/storageService';
+import { deleteImage } from '../services/imageService';
 
 
 export default function Medics() {
@@ -80,8 +81,10 @@ export default function Medics() {
   };
   
 
-  const deleteMedicine = (id) => {
-    setMedicines((prev) => prev.filter((item) => item.id !== id));
+  const deleteMedicine = async (medicine) => {
+    console.log('Deleting medicine:', medicine);
+    const response = await deleteMedicine(medicine.image_url, medicine.id);
+    setMedicines((prev) => prev.filter((medicine) => medicine.id !== id));
   };
 
   return (
@@ -100,7 +103,7 @@ export default function Medics() {
                     <MedicineListItem
                         medicine={item}
                         onEdit={() => toggleModal(item)}
-                        onDelete={() => deleteMedicine(item.id)}
+                        onDelete={() => deleteMedicine(item)}
                     />
                 )}
                 ListEmptyComponent={<Text style={styles.emptyText}>No medicines added</Text>}
