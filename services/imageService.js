@@ -1,65 +1,53 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from "../lib/supabase";
 
-/**
- * @param {string} uri 
- * @param {string} userId 
- * @returns {Promise<string>} 
- */
-export async function uploadImage(uri, userId) {
+export const uploadImage = async (uri, userId) => {
   try {
-    const fileName = `${userId}/${Date.now()}.jpg`; 
+    console.log('Starting image upload...');
     const response = await fetch(uri);
     const blob = await response.blob();
+    console.log('Image blob created:', blob);
 
-    const { data, error } = await supabase.storage
-      .from('medicines') 
+    const fileName = `${userId}-${Date.now()}.jpg`;
+    console.log('Generated file name:', fileName);
+
+    const { data, error: uploadError } = await supabase.storage
+      .from('medicines')
       .upload(fileName, blob, {
-        contentType: 'image/jpeg',
+        cacheControl: '3600',
+        upsert: false,
       });
 
-    if (error) {
-      console.error('Error uploading image:', error.message);
-      throw new Error(error.message);
+    if (uploadError) {
+      console.error('Error uploading to Supabase Storage:', uploadError.message);
+      throw uploadError;
     }
 
-    const { publicURL, error: publicError } = supabase.storage
+    console.log('Upload successful. File path:', data.path);
+
+    const { publicUrl, error: publicUrlError } = supabase.storage
       .from('medicines')
-      .getPublicUrl(fileName);
+      .getPublicUrl('images/' + fileName);
 
-    if (publicError) {
-      console.error('Error fetching public URL:', publicError.message);
-      throw new Error(publicError.message);
+    if (publicUrlError || !publicUrl) {
+      console.warn('Public URL generation failed, attempting signed URL...');
+
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        .from('medicines')
+        .createSignedUrl(data.path, 60 * 60);
+
+      if (signedUrlError) {
+        console.error('Error generating signed URL:', signedUrlError.message);
+        throw signedUrlError;
+      }
+
+      console.log('Generated Signed URL:', signedUrlData.signedUrl);
+      return signedUrlData.signedUrl;
     }
 
-    return publicURL;
-  } catch (error) {
-    console.error('Upload failed:', error.message);
-    throw error;
+    console.log('Generated Public URL:', publicUrl);
+    return publicUrl;
+  } catch (err) {
+    console.error('Error uploading image:', err.message);
+    throw err;
   }
-}
-
-export async function deleteImage(filePath) {
-    const { error } = await supabase.storage
-      .from('medicines')
-      .remove([filePath]);
-  
-    if (error) {
-      console.error('Error deleting image:', error.message);
-      throw new Error(error.message);
-    }
-}
-  
-
-export async function listImages(userId) {
-    const { data, error } = await supabase.storage
-      .from('medicines')
-      .list(userId);
-  
-    if (error) {
-      console.error('Error listing images:', error.message);
-      throw new Error(error.message);
-    }
-  
-    return data;
-}
-  
+};
