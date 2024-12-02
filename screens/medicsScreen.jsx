@@ -6,7 +6,7 @@ import MedicineListItem from '../components/medics/medicineListItem';
 import AddMedicineButton from '../components/medics/addMedicineButton';
 import { supabase } from '../lib/supabase';
 import { getUserUUID } from '../services/storageService';
-import { deleteImage } from '../services/imageService';
+import { deleteMedicine } from '../services/imageService';
 
 
 export default function Medics() {
@@ -17,10 +17,11 @@ export default function Medics() {
 
   const fetchMedicines = async () => {
     try {
+      const userId = await getUserUUID();
       const { data, error } = await supabase
         .from('medications')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('user_id', userId);
 
       console.log('Data:', data);
       if (error) {
@@ -81,10 +82,15 @@ export default function Medics() {
   };
   
 
-  const deleteMedicine = async (medicine) => {
+  const handleDeleteMedicine = async (medicine) => {
+    try {
     console.log('Deleting medicine:', medicine);
     const response = await deleteMedicine(medicine.image_url, medicine.id);
-    setMedicines((prev) => prev.filter((medicine) => medicine.id !== id));
+    setMedicines((prev) => prev.filter((m) => m.id !== medicine.id));
+    } catch (error) {
+      console.error('Error deleting medicine:', error.message);
+      alert('Failed to delete medicine. Please try again.');
+    }
   };
 
   return (
@@ -103,7 +109,7 @@ export default function Medics() {
                     <MedicineListItem
                         medicine={item}
                         onEdit={() => toggleModal(item)}
-                        onDelete={() => deleteMedicine(item)}
+                        onDelete={() => handleDeleteMedicine(item)}
                     />
                 )}
                 ListEmptyComponent={<Text style={styles.emptyText}>No medicines added</Text>}
