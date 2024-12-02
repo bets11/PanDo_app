@@ -1,31 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Image, ActivityIndicator, Animated, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  Image,
+  ActivityIndicator,
+  Animated,
+  Dimensions,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../../lib/supabase";
 import { getUserUUID } from "../../services/storageService";
+
+const profileImages = {
+  col1: require("../../assets/pandaProfil.png"), 
+  col2: require("../../assets/profile_col2.png"),
+  col3: require("../../assets/profile_col3.png"),
+  col4: require("../../assets/profile_col4.png"),
+  col5: require("../../assets/profile_col5.png"),
+};
 
 const { width } = Dimensions.get("window");
 
 export default function ProfileModal({ visible, onClose }) {
-  const [profile, setProfile] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const translateX = useState(new Animated.Value(-width))[0]; 
+  const [profile, setProfile] = useState(null); 
+  const [email, setEmail] = useState(null); 
+  const [loading, setLoading] = useState(false); 
+  const [currentProfileImage, setCurrentProfileImage] = useState(profileImages.col1); 
+  const translateX = useState(new Animated.Value(-width))[0];
 
   useEffect(() => {
     if (visible) {
-      fetchProfileData();
+      fetchProfileData(); 
+      loadProfileImage(); 
       Animated.timing(translateX, {
-        toValue: 0, 
-        duration: 600, 
+        toValue: 0,
+        duration: 600,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(translateX, {
-        toValue: -width, 
+        toValue: -width,
         duration: 500,
         useNativeDriver: true,
       }).start(() => {
-        setProfile(null); 
+        setProfile(null);
       });
     }
   }, [visible]);
@@ -33,7 +54,7 @@ export default function ProfileModal({ visible, onClose }) {
   const fetchProfileData = async () => {
     setLoading(true);
     try {
-      const userId = await getUserUUID();
+      const userId = await getUserUUID(); 
 
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
@@ -61,13 +82,27 @@ export default function ProfileModal({ visible, onClose }) {
     }
   };
 
+  const loadProfileImage = async () => {
+    try {
+      const savedKey = await AsyncStorage.getItem("currentPandaKey"); 
+      if (savedKey && profileImages[savedKey]) {
+        setCurrentProfileImage(profileImages[savedKey]); 
+      } else {
+        setCurrentProfileImage(profileImages.col1); 
+      }
+    } catch (error) {
+      console.error("Error loading profile image:", error.message);
+      setCurrentProfileImage(profileImages.col1); 
+    }
+  };
+
   return (
     <Modal transparent visible={visible} animationType="none">
       <View style={styles.modalOverlay}>
         <Animated.View
           style={[
             styles.modalContent,
-            { transform: [{ translateX }] }, 
+            { transform: [{ translateX }] },
           ]}
         >
           {loading ? (
@@ -75,10 +110,11 @@ export default function ProfileModal({ visible, onClose }) {
           ) : (
             <>
               <Image
-                source={require("../../assets/pandaProfil.png")}
+                source={currentProfileImage}
                 style={styles.profileImageLarge}
               />
               <Text style={styles.profileTitle}>Profile</Text>
+
               {profile ? (
                 <>
                   <Text style={styles.profileText}>
@@ -88,7 +124,9 @@ export default function ProfileModal({ visible, onClose }) {
                     {email || "Email not set"}
                   </Text>
                   <Text style={styles.profileText}>
-                    {profile.birthdate?.split("-").reverse().join(".")}
+                    {profile.birthdate
+                      ? profile.birthdate.split("-").reverse().join(".")
+                      : "Not set"}
                   </Text>
                   <Text style={styles.profileText}>
                     {profile.illness || ""}
@@ -100,6 +138,7 @@ export default function ProfileModal({ visible, onClose }) {
               ) : (
                 <Text style={styles.profileText}>No profile data available</Text>
               )}
+
               <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
@@ -121,7 +160,7 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    width: "80%", 
+    width: "80%",
     backgroundColor: "#fdfdf0",
     padding: 20,
     borderRightWidth: 1,
@@ -134,10 +173,10 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignSelf: "center",
     borderWidth: 1,
-    marginBottom: 20,
+    marginBottom: 10,
     borderColor: "#000",
     backgroundColor: "#dffcbc",
-    marginTop: 40,
+    marginTop: 55,
   },
   profileTitle: {
     fontSize: 24,
