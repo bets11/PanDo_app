@@ -4,9 +4,9 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 export default function MedicineListItem({ medicine, onEdit, onDelete }) {
   return (
     <View style={styles.itemContainer}>
-      {medicine.image && (
+      {medicine.image_url && (
         <Image
-          source={{ uri: medicine.imaage_url }}
+          source={{ uri: medicine.image_url }}
           style={styles.medicineImage}
         />
       )}

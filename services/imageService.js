@@ -1,65 +1,79 @@
-import { supabase } from "../lib/supabase";
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as FileSystem from 'expo-file-system';
+import { supabase } from '../lib/supabase';
 
 export const uploadImage = async (uri, userId) => {
   try {
-    console.log('Starting image upload...');
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    console.log('Image blob created:', blob);
+    console.log('Starting image upload...', uri);
 
+    // Verify the file exists
+    const fileInfo = await FileSystem.getInfoAsync(uri);
+    if (!fileInfo.exists) {
+      throw new Error('File does not exist');
+    }
+
+    // Resize and compress the image
+    const manipulatedImage = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 1024 } }], // Resize to reduce file size
+      { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+    );
+
+    console.log('Manipulated Image:', manipulatedImage);
+
+    // Prepare file for upload
     const fileName = `${userId}-${Date.now()}.jpg`;
-    console.log('Generated file name:', fileName);
+    const formData = new FormData();
 
-    const { data, error: uploadError } = await supabase.storage
+    formData.append('file', {
+      uri: manipulatedImage.uri,
+      name: fileName,
+      type: 'image/jpeg',
+    });
+
+    console.log('Uploading file using FormData:', fileName);
+
+    // Upload using Supabase storage
+    const { data, error } = await supabase.storage
       .from('medicines')
-      .upload(fileName, blob, {
-        cacheControl: '3600',
-        upsert: false,
+      .upload(fileName, formData, {
+        contentType: 'image/jpeg',
       });
 
-    if (uploadError) {
-      console.error('Error uploading to Supabase Storage:', uploadError.message);
-      throw uploadError;
+    if (error) {
+      console.error('Upload error:', error.message);
+      throw error;
     }
 
-    console.log('Upload successful. File path:', data.path);
+    console.log('Upload successful:', data);
 
-    const { publicUrl, error: publicUrlError } = supabase.storage
+    // Get public URL
+    const { data: publicUrl, error: publicUrlError } = supabase.storage
       .from('medicines')
-      .getPublicUrl('images/' + fileName);
+      .getPublicUrl(fileName);
 
-    if (publicUrlError || !publicUrl) {
-      console.warn('Public URL generation failed, attempting signed URL...');
-
-      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-        .from('medicines')
-        .createSignedUrl(data.path, 60 * 60);
-
-      if (signedUrlError) {
-        console.error('Error generating signed URL:', signedUrlError.message);
-        throw signedUrlError;
-      }
-
-      console.log('Generated Signed URL:', signedUrlData.signedUrl);
-      return signedUrlData.signedUrl;
+    if (publicUrlError) {
+      console.error('Error getting public URL:', publicUrlError.message);
+      throw publicUrlError;
     }
 
-    console.log('Generated Public URL:', publicUrl);
     return publicUrl;
-  } catch (err) {
-    console.error('Error uploading image:', err.message);
-    throw err;
+  } catch (error) {
+    console.error('Error uploading image:', error.message);
+    throw error;
   }
 };
 
+
+
 export const deleteMedicine = async (imageUrl, medicineId) => {
   try {
-    // Extract filename from signed URL
-    const matches = imageUrl.match(/medicines\/(.*?)\?token=/);
-    if (!matches || !matches[1]) {
+    // Extract filename from the image URL
+    const fileNameMatch = imageUrl.match(/medicines\/(.+)$/);
+    if (!fileNameMatch || !fileNameMatch[1]) {
       throw new Error('Invalid image URL format');
     }
-    const fileName = matches[1];
+    const fileName = fileNameMatch[1];
 
     // Delete image from storage
     const { error: storageError } = await supabase.storage
@@ -70,6 +84,8 @@ export const deleteMedicine = async (imageUrl, medicineId) => {
       console.error('Error deleting image:', storageError.message);
       throw storageError;
     }
+
+    console.log('Image deleted successfully:', fileName);
 
     // Delete medicine record from database
     const { error: dbError } = await supabase
@@ -82,8 +98,9 @@ export const deleteMedicine = async (imageUrl, medicineId) => {
       throw dbError;
     }
 
-    return { success: true };
+    console.log('Medicine record deleted successfully:', medicineId);
 
+    return { success: true };
   } catch (error) {
     console.error('Delete operation failed:', error.message);
     throw error;
