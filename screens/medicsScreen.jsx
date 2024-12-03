@@ -22,21 +22,28 @@ export default function Medics() {
         .from('medications')
         .select('*')
         .eq('user_id', userId);
-
-      console.log('Data:', data);
+  
       if (error) {
         console.error('Error fetching medicines:', error.message);
-      } else {
-        setMedicines(data || []);
+        return;
       }
+  
+      console.log('Fetched original medicines:', data); 
+      // Parse image_url field to extract publicUrl
+      const parsedMedicines = data.map((item) => ({
+        ...item,
+        image_url: item.image_url ? JSON.parse(item.image_url).publicUrl : null,
+      }));
+  
+      console.log('Fetched medicines:', parsedMedicines);
+      setMedicines(parsedMedicines || []);
     } catch (error) {
       console.error('Unexpected error fetching medicines:', error.message);
     }
-  }
+  };  
 
   useEffect(() => {
     fetchMedicines();
-    console.log('Medicines:', medicines);
   }, []);
 
   const toggleModal = (medicine = null) => {
