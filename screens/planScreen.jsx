@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { StyleSheet, View, Image, SafeAreaView, Settings } from "react-native";
+import { StyleSheet, View, Image, SafeAreaView } from "react-native";
 import GoBackButton from "../components/common/goBackButton";
 import EventButtons from "../components/plan/eventsButton";
 import PlanModal from "../components/plan/planModal";
@@ -8,93 +8,65 @@ import { getUserUUID } from "../services/storageService";
 import Calendar from "../components/plan/daySelecter";
 import { useFocusEffect } from "@react-navigation/native";
 import SettingsModal from "../components/plan/settingsModal";
+import EventModal from "../components/plan/eventModal";
 
-
-export default function Plan({ navigation, route }) {
+export default function Plan({ navigation }) {
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [planModalVisible, setPlanModalVisible] = useState(false);
   const [settingModalVisible, setSettingModalVisible] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState("");
+  const [isEventModalVisible, setIsEventModalVisible] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventTime, setEventTime] = useState({});
   const [selectedView, setSelectedView] = useState(1);
 
-
   const fetchEvents = async () => {
     const userId = await getUserUUID();
-  
+
     if (!userId) {
       console.error("User not logged in");
       return;
     }
-  
+
     try {
       const { data, error } = await supabase
         .from("events")
         .select("id, type, start_time, end_time, color")
         .eq("user_id", userId);
-  
+
       if (error) {
         console.error("Error fetching events:", error.message);
         return;
       }
-  
-      console.log("Fetched events:", data);
-  
-      const formattedEvents = data.map((event) => {
-        const startLocal = new Date(event.start_time).toISOString().replace("Z", ""); // Local time
-        const endLocal = new Date(event.end_time).toISOString().replace("Z", ""); // Local time
-  
-        console.log("Start Local:", startLocal);
-        console.log("End Local:", endLocal);
-  
-        return {
-          id: event.id.toString(),
-          title: event.type,
-          start: { dateTime: startLocal },
-          end: { dateTime: endLocal },
-          color: event.color,
-        };
-      });
-  
-      console.log("Formatted events:", formattedEvents);
+
+      const formattedEvents = data.map((event) => ({
+        id: event.id.toString(),
+        title: event.type,
+        start: { dateTime: new Date(event.start_time).toISOString().replace("Z", "") },
+        end: { dateTime: new Date(event.end_time).toISOString().replace("Z", "") },
+        color: event.color,
+      }));
+
       setCalendarEvents(formattedEvents);
     } catch (err) {
       console.error("Unexpected error during event fetching:", err.message);
     }
   };
 
-  
   useFocusEffect(
     useCallback(() => {
+      console.log("callign useEffect")
       fetchEvents();
-      console.log("Calendar Events:", calendarEvents);
     }, [])
   );
 
   useEffect(() => {
     const nextHalfHour = getNextHalfHour();
-
-    const startHour = parseInt(nextHalfHour.startHour, 10);
-    const startMinute = parseInt(nextHalfHour.startMinute, 10);
-
-    let endHour = startHour;
-    let endMinute = startMinute + 30;
-
-    if (endMinute >= 60) {
-      endMinute -= 60;
-      endHour += 1;
-    }
-
-    if (endHour >= 24) {
-      endHour = 0;
-    }
-
     setEventTime({
-      startHour: String(startHour).padStart(2, "0"),
-      startMinute: String(startMinute).padStart(2, "0"),
-      endHour: String(endHour).padStart(2, "0"),
-      endMinute: String(endMinute).padStart(2, "0"),
+      startHour: nextHalfHour.startHour,
+      startMinute: nextHalfHour.startMinute,
+      endHour: nextHalfHour.endHour,
+      endMinute: nextHalfHour.endMinute,
     });
   }, []);
 
@@ -104,37 +76,33 @@ export default function Plan({ navigation, route }) {
       Medicine: "#FFCCAC",
       Sports: "#FDD475",
     };
-  
+
     if (!selectedEvent || !eventTime.startHour || !eventTime.endHour) {
       console.error("Missing event details:", { selectedEvent, eventTime });
       return;
     }
-  
+
     const year = selectedDate.getFullYear();
     const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
     const day = String(selectedDate.getDate()).padStart(2, "0");
-  
     const eventDate = `${year}-${month}-${day}`;
-  
+
     const newEvent = {
       type: selectedEvent,
-      start_time: `${eventDate}T${eventTime.startHour}:${eventTime.startMinute}:00Z`, 
-      end_time: `${eventDate}T${eventTime.endHour}:${eventTime.endMinute}:00Z`, 
+      start_time: `${eventDate}T${eventTime.startHour}:${eventTime.startMinute}:00`,
+      end_time: `${eventDate}T${eventTime.endHour}:${eventTime.endMinute}:00`,
       color: eventColors[selectedEvent],
       user_id: await getUserUUID(),
     };
-  
+
     try {
-      const { data, error } = await supabase
-        .from("events")
-        .insert([newEvent])
-        .select();
-  
+      const { data, error } = await supabase.from("events").insert([newEvent]).select();
+
       if (error) {
         console.error("Error saving event:", error.message, error.details);
         return;
       }
-  
+
       const formattedEvent = {
         id: data[0]?.id.toString(),
         title: selectedEvent,
@@ -142,53 +110,57 @@ export default function Plan({ navigation, route }) {
         end: { dateTime: newEvent.end_time },
         color: newEvent.color,
       };
-  
-      console.log("Event saved successfully:", formattedEvent);
+
       setCalendarEvents((prevEvents) => [...prevEvents, formattedEvent]);
       setPlanModalVisible(false);
     } catch (err) {
       console.error("Unexpected error during event saving:", err.message);
     }
   };
-  
+
   const getNextHalfHour = () => {
     const now = new Date();
-    let nextHour = now.getHours();
-    let nextMinute = now.getMinutes() < 30 ? "30" : "00";
-
-    if (nextMinute === "00") {
-      nextHour += 1;
-      if (nextHour === 24) nextHour = 0; 
-    }
+    const nextMinute = now.getMinutes() < 30 ? 30 : 0;
+    const nextHour = nextMinute === 0 ? now.getHours() + 1 : now.getHours();
 
     return {
       startHour: String(nextHour).padStart(2, "0"),
-      startMinute: nextMinute,
+      startMinute: String(nextMinute).padStart(2, "0"),
+      endHour: String(nextHour + (nextMinute === 0 ? 1 : 0)).padStart(2, "0"),
+      endMinute: String((nextMinute + 30) % 60).padStart(2, "0"),
     };
   };
 
   const handleViewSelection = (view) => {
     setSelectedView(view);
     setSettingModalVisible(false);
-  }
+  };
 
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+    setIsEventModalVisible(true);
+  };
 
+  const closeEventModal = () => {
+    console.log("Closing event modal"); 
+    fetchEvents();
+    setSelectedEvent(null);
+    setIsEventModalVisible(false);
+  };
 
   return (
     <View style={styles.mainContainer}>
       <SafeAreaView style={styles.safeArea}>
         <GoBackButton screen={"Overview"} />
       </SafeAreaView>
-      <Image
-        source={require("../assets/todo.webp")}
-        style={styles.pandaImage}
-      />
+      <Image source={require("../assets/todo.webp")} style={styles.pandaImage} />
 
-      <Calendar style={styles.header}
+      <Calendar
+        style={styles.header}
         setSelectedDate={setSelectedDate}
         events={calendarEvents}
-        navigation={navigation}
         view={selectedView}
+        onEventClick={handleEventClick}
       >
         {selectedDate.toDateString()}
       </Calendar>
@@ -199,7 +171,10 @@ export default function Plan({ navigation, route }) {
       />
       <PlanModal
         modalVisible={planModalVisible}
-        closeModal={() => setPlanModalVisible(false)}
+        closeModal={() => {
+          setPlanModalVisible(false);
+          fetchEvents(); 
+        }}
         selectEvent={setSelectedEvent}
         eventTime={eventTime}
         setEventTime={setEventTime}
@@ -211,6 +186,18 @@ export default function Plan({ navigation, route }) {
         onClose={() => setSettingModalVisible(false)}
         onSelect={handleViewSelection}
         selectedView={selectedView}
+      />
+      <EventModal
+        visible={isEventModalVisible}
+        onClose={closeEventModal}
+        event={selectedEvent}
+        onUpdate={(updatedEvent) => {
+          console.log("Updated event:", updatedEvent);
+          const updatedEvents = calendarEvents.map((event) =>
+            event.id === updatedEvent.id ? updatedEvent : event
+          );
+          setCalendarEvents(updatedEvents);
+        }}
       />
     </View>
   );

@@ -17,7 +17,7 @@ const customTheme = {
   },
 };
 
-const Calendar = ({ setSelectedDate, events, navigation, view }) => {
+const Calendar = ({ setSelectedDate, events, view, onEventClick }) => {
   const handleScroll = (newDate) => {
     console.log("New Date:", newDate);
     const parsedDate = new Date(newDate);
@@ -26,7 +26,7 @@ const Calendar = ({ setSelectedDate, events, navigation, view }) => {
 
   const renderEvent = useCallback(
     (event) => (
-      <TouchableOpacity onPress={() => handleEventClick(event)}>
+      <TouchableOpacity onPress={() => onEventClick(event)}>
         <View
           style={{
             width: "100%",
@@ -40,12 +40,8 @@ const Calendar = ({ setSelectedDate, events, navigation, view }) => {
         </View>
       </TouchableOpacity>
     ),
-    []
+    [onEventClick]
   );
-
-  const handleEventClick = (event) => {
-    navigation.navigate("Event", { event });
-  };
 
   const getLocalTimezoneOffset = () => {
     const offsetMinutes = new Date().getTimezoneOffset();
@@ -60,7 +56,7 @@ const Calendar = ({ setSelectedDate, events, navigation, view }) => {
       numberOfDays={view}
       onChange={handleScroll}
       events={events}
-      timeZone={getLocalTimezoneOffset()} // Adjust timezone dynamically
+      timeZone={getLocalTimezoneOffset()}
     >
       <CalendarHeader />
       <CalendarBody renderEvent={renderEvent} />

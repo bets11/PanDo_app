@@ -1,23 +1,7 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import {View,Text,Modal,TouchableOpacity,TextInput,StyleSheet,Alert,} from "react-native";
 
-export default function PlanModal({
-  modalVisible,
-  closeModal,
-  selectEvent,
-  eventTime,
-  setEventTime,
-  saveEvent,
-  selectedDate,
-}) {
+export default function PlanModal({modalVisible,closeModal,selectEvent,eventTime,setEventTime,saveEvent,selectedDate}) {
   const [selectedButton, setSelectedButton] = useState(null);
   const [step, setStep] = useState(1); 
 
@@ -33,7 +17,6 @@ export default function PlanModal({
       return;
     }
     await saveEvent();
-    Alert.alert("Success", "Event saved successfully!");
     setStepWithPresetTime(1);
     setSelectedButton(null);
     handleCloseModal();
