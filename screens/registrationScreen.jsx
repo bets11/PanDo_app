@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Image, Alert } from 'react-native';
+import { StyleSheet, View, Image, Alert, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GoBackButton from '../components/common/goBackButton';
 import FormField from '../components/registration/formField';
@@ -47,6 +47,8 @@ export default function RegistrationScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.mainContainer}>
         <GoBackButton screen={'Login'}/>
+        <Text style={styles.greeting}>Sign in</Text>
+        <Text style={styles.info}>to access the playful world of PanDo!</Text>
       <View style={styles.container}>
         
 
@@ -81,10 +83,24 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     marginBottom: 15,
   }, 
+  info: {
+    fontSize: 16,
+    color: '#000',
+    marginTop: 5,
+    marginLeft: 20,
+    color: '#555',
+  }, 
+  greeting: {
+    marginTop: 12,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 20
+  }, 
   pandaImage: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     resizeMode: 'contain', 
-    marginBottom: 20,
+    marginBottom: 10,
   },
 });
