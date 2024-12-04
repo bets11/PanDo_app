@@ -15,7 +15,7 @@ export default function Start() {
     <View style={styles.container}>
        <View style={{justifyContent: 'center', alignItems: 'center', width: '100%' }}>
       <AnimationComponent 
-        message="Welcome Back!"
+        message="Welcome!"
         imageSource={require('../assets/progress.webp')}
       />
       </View>
