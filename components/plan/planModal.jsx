@@ -216,29 +216,26 @@ export default function PlanModal({modalVisible,closeModal,selectEvent,eventTime
                   placeholder="MM"
                 />
               </View>
+              <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.button, styles.deleteButton]}
+                onPress={() => setStepWithPresetTime(1)}>
 
-              <View style={styles.navigationButtons}>
-                <TouchableOpacity
-                  style={styles.navigationButton}
-                  onPress={() => setStepWithPresetTime(1)} 
-                >
-                  <Text style={styles.navigationButtonText}>Back</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={handleSaveEvent}
-                >
-                  <Text style={styles.saveButtonText}>Save Event</Text>
-                </TouchableOpacity>
-              </View>
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.closeButton]}
+                onPress={handleCloseModal}  >
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.saveButton]}
+                onPress={handleSaveEvent}>
+                <Text style={styles.buttonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
             </>
           )}
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={handleCloseModal}
-          >
-            <Text style={styles.cancelButtonText}>Close</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -306,54 +303,95 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   navigationButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "row", 
+    justifyContent: "space-between", 
     alignItems: "center",
     width: "100%",
-    marginTop: 5,
+    marginTop: 20, 
   },
   navigationButton: {
     backgroundColor: "#a8bfe7",
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     borderRadius: 10,
     alignItems: "center",
+    flex: 1, 
+    marginHorizontal: 5, 
   },
   navigationButtonText: {
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
-    fontSize: 16,
+    fontSize: 14,
   },
   saveButton: {
     backgroundColor: "#98ac6f",
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    flex: 1, 
+    marginHorizontal: 5,
     alignItems: "center",
   },
   saveButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 14,
   },
   cancelButton: {
     backgroundColor: "#F66257",
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     borderRadius: 10,
-    width: "30%",
+    flex: 1, 
+    marginHorizontal: 5,
     alignItems: "center",
-    marginTop: 10,
   },
   cancelButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 14,
   },
   confirmationText: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+  },
+  timeSelectionTitle:{
+    fontSize: 16,
+    color: "black",
+    marginBottom: 8,
+    fontWeight: "bold",
+    textAlign: "center", 
+  },
+  buttonContainer: {
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    alignItems: "center",
+    marginTop: 20,
+  },
+  button: {
+    flex: 1, 
+    paddingVertical: 12,
+    marginHorizontal: 5, 
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  deleteButton: {
+    backgroundColor: "#F66257", 
+  },
+  closeButton: {
+    backgroundColor: "#888888", 
+  },
+  saveButton: {
+    backgroundColor: "#98ac6f", 
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 14,
   },
 });

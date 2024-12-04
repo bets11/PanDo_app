@@ -1,5 +1,6 @@
-import React from 'react';
-import { StyleSheet, View, Alert, Text} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import Modal from 'react-native-modal';
 import Logo from '../components/login/logo';
 import InputField from '../components/common/inputField';
 import SubmitButton from '../components/common/submitButton';
@@ -8,20 +9,26 @@ import SignupPrompt from '../components/login/signupPrompt';
 import { loginUser } from '../services/authService';
 
 export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const showModal = (message) => {
+    setModalMessage(message);
+    setIsModalVisible(true);
+  };
 
   const handleLogin = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields.');
+      showModal('Please fill in all fields.');
       return;
     }
 
     if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address.');
+      showModal('Please enter a valid email address.');
       return;
     }
 
@@ -30,27 +37,35 @@ export default function LoginScreen({ navigation }) {
 
       if (response.success) {
         console.log(response.message);
-        navigation.navigate('Overview'); 
+        navigation.navigate('Overview');
       } else {
-        Alert.alert('Error', response.message); 
+        showModal(response.message);
       }
     } catch (error) {
       console.error('Unexpected error during login:', error.message);
-      Alert.alert('Error', 'Something went wrong. Please try again later.');
+      showModal('Something went wrong. Please try again later.');
     }
   };
-
 
   return (
     <View style={styles.container}>
       <Text style={styles.greeting}>Hello!</Text>
       <Text style={styles.info}>We are really happy to see you again!</Text>
       <Logo />
-      <InputField placeholder="E-Mail" value={email} onChangeText={setEmail} keyboardType="email-address"/>
+      <InputField placeholder="E-Mail" value={email} onChangeText={setEmail} keyboardType="email-address" />
       <InputField placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-      <SubmitButton title="Login" onPress={handleLogin} backgroundColor='#000000' fontColor='#FFF' />
+      <SubmitButton title="Login" onPress={handleLogin} backgroundColor="#000000" fontColor="#FFF" />
       <ForgotPassword />
       <SignupPrompt onPress={() => navigation.navigate('Register')} />
+
+      <Modal isVisible={isModalVisible}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalText}>{modalMessage}</Text>
+          <TouchableOpacity style={styles.modalButton} onPress={() => setIsModalVisible(false)}>
+            <Text style={styles.modalButtonText}>OK</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -72,6 +87,29 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 16,
     color: '#555',
-    marginBottom: 80, 
+    marginBottom: 80,
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#000',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  modalButton: {
+    backgroundColor: '#000',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

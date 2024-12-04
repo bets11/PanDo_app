@@ -105,8 +105,6 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
         Alert.alert("Error", "Failed to delete event.");
         return;
       }
-
-      Alert.alert("Success", "Event deleted successfully.");
       onClose(); 
     } catch {
       Alert.alert("Error", "An unexpected error occurred.");
@@ -118,22 +116,22 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Edit Event</Text>
-
           <Text style={styles.label}>Event Type:</Text>
           <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={updatedEvent.type}
-              onValueChange={(itemValue) =>
-                setUpdatedEvent((prev) => ({ ...prev, type: itemValue }))
-              }
-              style={styles.picker}
-            >
-              <Picker.Item label="Therapy" value="Therapy" />
-              <Picker.Item label="Medicine" value="Medicine" />
-              <Picker.Item label="Sports" value="Sports" />
-            </Picker>
-          </View>
-
+          <Picker
+            selectedValue={updatedEvent.type}
+            onValueChange={(itemValue) =>
+              setUpdatedEvent((prev) => ({ ...prev, type: itemValue }))
+            }
+            style={styles.picker}
+            itemStyle={styles.pickerItem}
+            mode="dropdown" 
+          >
+            <Picker.Item label="Therapy" value="Therapy" />
+            <Picker.Item label="Medicine" value="Medicine" />
+            <Picker.Item label="Sports" value="Sports" />
+          </Picker>
+        </View>
           <Text style={styles.label}>Start Time:</Text>
           <View style={styles.timeInputContainer}>
             <TextInput
@@ -188,17 +186,17 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
             />
           </View>
 
-          <TouchableOpacity style={styles.saveButton} onPress={handleUpdate}>
-            <Text style={styles.saveButtonText}>Save Changes</Text>
+          <View style={styles.buttonRow}>
+          <TouchableOpacity style={[styles.actionButton, styles.deleteButton]} onPress={handleDelete}>
+            <Text style={styles.buttonText}>Delete</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-            <Text style={styles.deleteButtonText}>Delete Event</Text>
+          <TouchableOpacity style={[styles.actionButton, styles.closeButton]} onPress={onClose}>
+            <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Close</Text>
+          <TouchableOpacity style={[styles.actionButton, styles.saveButton]} onPress={handleUpdate}>
+            <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -218,10 +216,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
   },
   title: {
     fontSize: 24,
@@ -234,6 +230,7 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 8,
     fontWeight: "bold",
+    textAlign: "center", 
   },
   pickerContainer: {
     borderWidth: 1,
@@ -241,15 +238,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 20,
     overflow: "hidden",
-    height: 50,
-    justifyContent: "center",
+    backgroundColor: "#f9f9f9", 
+    paddingHorizontal: 10,
   },
   picker: {
+    width: "100%",
     color: "black",
+    fontSize: 16,
   },
+  pickerItem: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color:'black',
+  },  
   timeInputContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center", 
     marginBottom: 20,
   },
   input: {
@@ -266,39 +271,31 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginHorizontal: 5,
   },
-  saveButton: {
-    backgroundColor: "#98ac6f",
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 10,
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: 20,
   },
-  saveButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  deleteButton: {
-    backgroundColor: "#F66257",
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  closeButton: {
-    backgroundColor: "#888",
+  actionButton: {
+    flex: 1,
+    marginHorizontal: 5,
     paddingVertical: 10,
     borderRadius: 8,
     alignItems: "center",
   },
-  closeButtonText: {
+  saveButton: {
+    backgroundColor: "#98ac6f",
+  },
+  deleteButton: {
+    backgroundColor: "#F66257",
+  },
+  closeButton: {
+    backgroundColor: "#888",
+  },
+  buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
   },
 });
+
