@@ -21,6 +21,8 @@
     "@supabase/supabase-js": "^2.46.2",
     "cross-spawn": "^7.0.6",
     "expo": "^52.0.14",
+    "expo-file-system": "~18.0.4",
+    "expo-image-manipulator": "~13.0.5",
     "expo-image-picker": "^16.0.3",
     "expo-status-bar": "~2.0.0",
     "install": "^0.13.0",
@@ -40,9 +42,7 @@
     "react-native-uuid": "^2.0.3",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.19.10",
-    "uuid": "^11.0.3",
-    "expo-file-system": "~18.0.4",
-    "expo-image-manipulator": "~13.0.5"
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

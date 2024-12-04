@@ -4,7 +4,6 @@ import Card from './card';
 import ResetButton from './resetButton';
 import GoBackButton from '../../components/common/goBackButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import progressImage from '../../assets/progress_col5.png';
 import { savePointsToUser } from '../../services/pointsService';
 import { getUserUUID } from '../../services/storageService';
 
@@ -17,14 +16,14 @@ const MemoryGame = () => {
       { id: 4, value: require('../../assets/progress.webp'), flipped: false, matched: false },
       { id: 5, value: require('../../assets/panda3.png'), flipped: false, matched: false },
       { id: 6, value: require('../../assets/panda3.png'), flipped: false, matched: false },
-      { id: 7, value: require('../../assets/fallingPanda.png'), flipped: false, matched: false },
-      { id: 8, value: require('../../assets/fallingPanda.png'), flipped: false, matched: false },
-      { id: 9, value: require('../../assets/katze.png'), flipped: false, matched: false },
-      { id: 10, value: require('../../assets/katze.png'), flipped: false, matched: false },
+      { id: 7, value: require('../../assets/profile_col3.png'), flipped: false, matched: false },
+      { id: 8, value: require('../../assets/profile_col3.png'), flipped: false, matched: false },
+      { id: 9, value: require('../../assets/cat.png'), flipped: false, matched: false },
+      { id: 10, value: require('../../assets/cat.png'), flipped: false, matched: false },
       { id: 11, value: require('../../assets/pandaProfil.png'), flipped: false, matched: false },
       { id: 12, value: require('../../assets/pandaProfil.png'), flipped: false, matched: false },
-      { id: 13, value: require('../../assets/pandaSetting.png'), flipped: false, matched: false },
-      { id: 14, value: require('../../assets/pandaSetting.png'), flipped: false, matched: false },
+      { id: 13, value: require('../../assets/profile_col5.png'), flipped: false, matched: false },
+      { id: 14, value: require('../../assets/profile_col5.png'), flipped: false, matched: false },
       { id: 15, value: require('../../assets/progress_col5.png'), flipped: false, matched: false },
       { id: 16, value: require('../../assets/progress_col5.png'), flipped: false, matched: false },
     ];

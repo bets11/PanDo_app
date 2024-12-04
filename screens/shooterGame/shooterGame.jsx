@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, PanResponder, Text, Button, TouchableWithoutFeedback  } from 'react-native';
+import { View, SafeAreaView, StyleSheet, Dimensions, PanResponder, Text, Button, TouchableWithoutFeedback  } from 'react-native';
 import Paddle from './paddle';
 import Ball from './ball';
 import Brick from './brick';
 import { savePointsToUser } from '../../services/pointsService';
 import { getUserUUID } from '../../services/storageService';
+import GoBackButton from '../../components/common/goBackButton';
+import PlayButton from '../../components/therapy/playButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -133,7 +135,8 @@ const ShooterGame = () => {
 
 
   return (
-    <View style={styles.container} {...panResponder.panHandlers}>
+    <SafeAreaView style={styles.container} {...panResponder.panHandlers}>
+      <GoBackButton />
       <View style={styles.status}>
         <Text style={styles.statusText}>Score: {score}</Text>
         <Text style={styles.statusText}>Lives: {lives}</Text>
@@ -141,13 +144,20 @@ const ShooterGame = () => {
       {gameState === 'start' && !IsStartButtonPressed && (
         <View style={styles.overlay}>
           <Text style={styles.title}>Breakout Game</Text>
-          <Button title="Start Game" onPress={() => setIsStartButtonPressed(true)} />
+          <View style={styles.explanationBox}>
+            <Text style={styles.explanationText}>
+              Use the paddle to hit the ball and break all the bricks. Avoid letting the ball fall, or you'll lose a life! 
+              Collect points by destroying bricks.
+            </Text>
+            <PlayButton onPress={() => setIsStartButtonPressed(true)} />
+            </View>
         </View>
       )}
+
       {gameState === 'start' && IsStartButtonPressed && (
         <TouchableWithoutFeedback onPress={() => startGame()}>
           <View style={styles.overlay}>
-            <Text style={styles.subtitle}>Tap anywhere to start</Text>
+            <Text style={styles.subtitle}>Tap here to start</Text>
           </View>
         </TouchableWithoutFeedback>
       )}
@@ -180,7 +190,7 @@ const ShooterGame = () => {
           )}
         </>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
   
@@ -199,18 +209,43 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     color: '#fff',
-    marginBottom: 20,
+    marginBottom: 40,
+    fontWeight:'bold',
+
   },
   status: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 20,
-    marginTop: 40,
+    marginTop: 10,
   },
   statusText: {
-    fontSize: 18,
+    fontSize: 32,
     color: '#333',
   },
+  explanationBox: {
+    padding: 20,
+    backgroundColor: '#E3F6CE', 
+    borderRadius: 10, 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    elevation: 5, 
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25, 
+    shadowRadius: 4, 
+  },
+  explanationText: {
+    fontSize: 24,
+    color: '#333',
+    textAlign: 'center',
+    marginTop:50,
+  },
+  subtitle:{
+    fontSize:24,
+    fontWeight:'bold',
+    color: 'white',
+  }
 });
 
 export default ShooterGame;
