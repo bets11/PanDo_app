@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity, Alert } 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GoBackButton from "../components/common/goBackButton";
 import { getPointsFromUser, updateUserPoints } from "../services/pointsService";
+import Animation from "../components/animation/animation";
 
 const colorImages = {
   black: require("../assets/progress_col1.png"),
@@ -13,6 +14,7 @@ const colorImages = {
 };
 
 export default function Progress() {
+  const [showAnimation, setShowAnimation] = useState(true);
   const [currentPandaColor, setCurrentPandaColor] = useState(require("../assets/progress_col1.png"));
   const [points, setPoints] = useState(0);
   const [unlockedColors, setUnlockedColors] = useState([]);
@@ -45,6 +47,10 @@ export default function Progress() {
 
     fetchData();
   }, []);
+
+  const handleAnimationEnd = () => {
+    setShowAnimation(false);
+  };
 
   const handleColorChange = async (color) => {
     if (color === "black" || unlockedColors.includes(color)) {
@@ -98,27 +104,40 @@ export default function Progress() {
           <Text style={styles.pointsText}>{points}</Text>
         </View>
       </SafeAreaView>
-      <Text style={styles.headerText}>
-        Let’s give your Panda{"\n"}a new look!
-      </Text>
-      <View style={styles.progressPandaContainer}>
-        <Image source={currentPandaColor} style={styles.progressPanda} />
-      </View>
-      <View style={styles.colorCirclesContainer}>
-        {Object.entries(colorCosts).map(([color, cost]) => (
-          <View key={color} style={styles.colorOption}>
-            <TouchableOpacity
-              style={[
-                styles.colorCircle,
-                { backgroundColor: color },
-                (unlockedColors.includes(color) || cost === 0) && styles.unlockedColor,
-              ]}
-              onPress={() => handleColorChange(color)}
-            />
-            {!unlockedColors.includes(color) && cost > 0 && <Text style={styles.costText}>{cost} points</Text>}
+      {showAnimation ? (
+        <View style={styles.animationContainer}>
+          <Animation
+            message="Great Job!"
+            imageSource={require("../assets/progress.webp")}
+            animationDuration={4000}
+            onAnimationEnd={handleAnimationEnd}
+          />
+        </View>
+      ) : (
+        <>
+          <Text style={styles.headerText}>
+            Let’s give your Panda{"\n"}a new look!
+          </Text>
+          <View style={styles.progressPandaContainer}>
+            <Image source={currentPandaColor} style={styles.progressPanda} />
           </View>
-        ))}
-      </View>
+          <View style={styles.colorCirclesContainer}>
+            {Object.entries(colorCosts).map(([color, cost]) => (
+              <View key={color} style={styles.colorOption}>
+                <TouchableOpacity
+                  style={[
+                    styles.colorCircle,
+                    { backgroundColor: color },
+                    (unlockedColors.includes(color) || cost === 0) && styles.unlockedColor,
+                  ]}
+                  onPress={() => handleColorChange(color)}
+                />
+                {!unlockedColors.includes(color) && cost > 0 && <Text style={styles.costText}>{cost} points</Text>}
+              </View>
+            ))}
+          </View>
+        </>
+      )}
     </View>
   );
 }
@@ -162,6 +181,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
+  animationContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+  },
   headerText: {
     fontSize: 28,
     fontWeight: "bold",
@@ -185,11 +210,9 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   progressPanda: {
-    progressPanda: {
-      width: 350, 
-      height: 350, 
-      resizeMode: "contain",
-    },    
+    width: 350,
+    height: 350,
+    resizeMode: "contain",
   },
   colorCirclesContainer: {
     flexDirection: "row",
