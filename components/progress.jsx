@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Animation from "../components/animation/animation";
 import GoBackButton from "../components/common/goBackButton";
 import { getPointsFromUser, updateUserPoints } from "../services/pointsService";
 
+const colorImages = {
+  black: require("../assets/progress_col1.png"),
+  blue: require("../assets/progress_col2.png"),
+  green: require("../assets/progress_col3.png"),
+  yellow: require("../assets/progress_col4.png"),
+  red: require("../assets/progress_col5.png"),
+};
+
 export default function Progress() {
-  const [showAnimation, setShowAnimation] = useState(true);
   const [currentPandaColor, setCurrentPandaColor] = useState(require("../assets/progress_col1.png"));
   const [points, setPoints] = useState(0);
+  const [unlockedColors, setUnlockedColors] = useState([]);
 
   const colorCosts = {
+    black: 0,
     blue: 5,
     green: 1,
     yellow: 2,
@@ -23,24 +31,12 @@ export default function Progress() {
         const userPoints = await getPointsFromUser();
         setPoints(userPoints || 0);
 
+        const savedUnlockedColors = await AsyncStorage.getItem("unlockedColors");
+        setUnlockedColors(savedUnlockedColors ? JSON.parse(savedUnlockedColors) : []);
+
         const savedKey = await AsyncStorage.getItem("currentPandaKey");
-        if (savedKey) {
-          switch (savedKey) {
-            case "col2":
-              setCurrentPandaColor(require("../assets/progress_col2.png"));
-              break;
-            case "col3":
-              setCurrentPandaColor(require("../assets/progress_col3.png"));
-              break;
-            case "col4":
-              setCurrentPandaColor(require("../assets/progress_col4.png"));
-              break;
-            case "col5":
-              setCurrentPandaColor(require("../assets/progress_col5.png"));
-              break;
-            default:
-              setCurrentPandaColor(require("../assets/progress_col1.png"));
-          }
+        if (savedKey && colorImages[savedKey]) {
+          setCurrentPandaColor(colorImages[savedKey]);
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -50,16 +46,20 @@ export default function Progress() {
     fetchData();
   }, []);
 
-  const handleAnimationEnd = () => {
-    setShowAnimation(false);
-  };
-
   const handleColorChange = async (color) => {
+    if (color === "black" || unlockedColors.includes(color)) {
+
+      Alert.alert("Color Applied", `You have switched to the ${color} color!`);
+      setCurrentPandaColor(colorImages[color]);
+      await AsyncStorage.setItem("currentPandaKey", color);
+      return;
+    }
+
     const cost = colorCosts[color];
     if (points >= cost) {
       Alert.alert(
-        "Confirm Purchase",
-        `This color costs ${cost} points. Do you want to purchase it?`,
+        "Unlock Color",
+        `This color costs ${cost} points. Do you want to unlock it?`,
         [
           { text: "Cancel", style: "cancel" },
           {
@@ -70,46 +70,29 @@ export default function Progress() {
                 await updateUserPoints(newPoints);
                 setPoints(newPoints);
 
-                let newKey;
-                switch (color) {
-                  case "blue":
-                    newKey = "col2";
-                    setCurrentPandaColor(require("../assets/progress_col2.png"));
-                    break;
-                  case "green":
-                    newKey = "col3";
-                    setCurrentPandaColor(require("../assets/progress_col3.png"));
-                    break;
-                  case "yellow":
-                    newKey = "col4";
-                    setCurrentPandaColor(require("../assets/progress_col4.png"));
-                    break;
-                  case "red":
-                    newKey = "col5";
-                    setCurrentPandaColor(require("../assets/progress_col5.png"));
-                    break;
-                  default:
-                    newKey = "col1";
-                }
+                const updatedUnlockedColors = [...unlockedColors, color];
+                setUnlockedColors(updatedUnlockedColors);
+                await AsyncStorage.setItem("unlockedColors", JSON.stringify(updatedUnlockedColors));
 
-                await AsyncStorage.setItem("currentPandaKey", newKey);
+                setCurrentPandaColor(colorImages[color]);
+                await AsyncStorage.setItem("currentPandaKey", color);
 
-                Alert.alert("Purchase Successful", `You have successfully purchased the ${color} color!`);
+                Alert.alert("Color Unlocked", `You have successfully unlocked the ${color} color!`);
               } catch (error) {
                 console.error("Error updating points:", error.message);
-                Alert.alert("Error", "Failed to update points. Please try again.");
+                Alert.alert("Error", "Failed to unlock the color. Please try again.");
               }
             },
           },
         ]
       );
     } else {
-      Alert.alert("Insufficient Points", "You do not have enough points to buy this color.");
+      Alert.alert("Oops!", `You need ${cost - points} more points to unlock this color. Keep playing and come back later!`);
     }
   };
 
   return (
-    <View style={[styles.container, !showAnimation && styles.orangeBackground]}>
+    <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <GoBackButton screen={"Overview"} />
         <View style={styles.pointsContainer}>
@@ -117,41 +100,27 @@ export default function Progress() {
           <Text style={styles.pointsText}>{points}</Text>
         </View>
       </SafeAreaView>
-      {showAnimation ? (
-        <View style={{ justifyContent: "center", alignItems: "center", width: "100%" }}>
-          <Animation
-            message="Great Job!"
-            imageSource={require("../assets/progress.webp")}
-            animationDuration={4000}
-            onAnimationEnd={handleAnimationEnd}
-          />
-        </View>
-      ) : (
-        <>
-          <Text style={styles.progressText}>PanDo</Text>
-          <View style={styles.progressPandaContainer}>
-            <Image source={currentPandaColor} style={styles.progressPanda} />
+      <Text style={styles.headerText}>
+        Let’s give your Panda{"\n"}a cool new look!
+      </Text>
+      <View style={styles.progressPandaContainer}>
+        <Image source={currentPandaColor} style={styles.progressPanda} />
+      </View>
+      <View style={styles.colorCirclesContainer}>
+        {Object.entries(colorCosts).map(([color, cost]) => (
+          <View key={color} style={styles.colorOption}>
+            <TouchableOpacity
+              style={[
+                styles.colorCircle,
+                { backgroundColor: color },
+                (unlockedColors.includes(color) || cost === 0) && styles.unlockedColor,
+              ]}
+              onPress={() => handleColorChange(color)}
+            />
+            {!unlockedColors.includes(color) && cost > 0 && <Text style={styles.costText}>{cost} points</Text>}
           </View>
-          <View style={styles.colorCirclesContainer}>
-            <TouchableOpacity
-              style={[styles.colorCircle, { backgroundColor: "blue" }]}
-              onPress={() => handleColorChange("blue")}
-            />
-            <TouchableOpacity
-              style={[styles.colorCircle, { backgroundColor: "green" }]}
-              onPress={() => handleColorChange("green")}
-            />
-            <TouchableOpacity
-              style={[styles.colorCircle, { backgroundColor: "yellow" }]}
-              onPress={() => handleColorChange("yellow")}
-            />
-            <TouchableOpacity
-              style={[styles.colorCircle, { backgroundColor: "red" }]}
-              onPress={() => handleColorChange("red")}
-            />
-          </View>
-        </>
-      )}
+        ))}
+      </View>
     </View>
   );
 }
@@ -161,9 +130,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f9cf9c",
-  },
-  orangeBackground: {
     backgroundColor: "#f9cf9c",
   },
   safeArea: {
@@ -198,10 +164,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
-  progressText: {
-    marginTop: 20,
+  headerText: {
+    fontSize: 28,
     fontWeight: "bold",
-    fontSize: 30,
+    textAlign: "center",
+    marginTop: 20,
+    lineHeight: 36,
+    color: "#333",
   },
   progressPandaContainer: {
     width: 400,
@@ -215,9 +184,11 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   progressPanda: {
-    width: 350,
-    height: 350,
-    resizeMode: "contain",
+    progressPanda: {
+      width: 350,
+      height: 350, 
+      resizeMode: "cover", 
+    },
   },
   colorCirclesContainer: {
     flexDirection: "row",
@@ -225,11 +196,23 @@ const styles = StyleSheet.create({
     width: "80%",
     marginTop: 20,
   },
+  colorOption: {
+    alignItems: "center",
+  },
   colorCircle: {
     width: 50,
     height: 50,
     borderRadius: 25,
     borderWidth: 1,
     borderColor: "#000",
+  },
+  unlockedColor: {
+    borderWidth: 2,
+    borderColor: "#00FF00",
+  },
+  costText: {
+    marginTop: 5,
+    fontSize: 14,
+    color: "#333",
   },
 });

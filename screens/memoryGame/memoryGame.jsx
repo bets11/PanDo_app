@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import Card from './card';
 import ResetButton from './resetButton';
 import GoBackButton from '../../components/common/goBackButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { savePointsToUser } from '../../services/pointsService';
 import { getUserUUID } from '../../services/storageService';
-
 
 const MemoryGame = () => {
     const initialCards = [
@@ -27,80 +26,113 @@ const MemoryGame = () => {
       { id: 15, value: require('../../assets/progress_col5.png'), flipped: false, matched: false },
       { id: 16, value: require('../../assets/progress_col5.png'), flipped: false, matched: false },
     ];
-  
-    const shuffle = (array) => array.sort(() => Math.random() - 0.5);
-  
-    const [cards, setCards] = useState(shuffle([...initialCards]));
-    const [selectedCards, setSelectedCards] = useState([]);
-    const [matches, setMatches] = useState(0);
-  
-    useEffect(() => {
-      if (selectedCards.length === 2) {
-        checkMatch();
-      }
-    }, [selectedCards]);
-  
-    const flipCard = (index) => {
-      const newCards = [...cards];
-      newCards[index].flipped = true;
-      setCards(newCards);
-      setSelectedCards((prev) => [...prev, index]);
-    };
-  
-    const checkMatch = () => {
-      const [firstIndex, secondIndex] = selectedCards;
-      if (cards[firstIndex].value === cards[secondIndex].value) {
-        const newCards = [...cards];
-        newCards[firstIndex].matched = true;
-        newCards[secondIndex].matched = true;
-        setCards(newCards);
-        setMatches(matches + 1);
-      } else {
-        setTimeout(() => {
-          const newCards = [...cards];
-          newCards[firstIndex].flipped = false;
-          newCards[secondIndex].flipped = false;
-          setCards(newCards);
-        }, 1000);
-      }
-      setSelectedCards([]);
-    };
-  
-    const resetGame = async () => {
+
+  const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+
+  const [cards, setCards] = useState(shuffle([...initialCards]));
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [matches, setMatches] = useState(0);
+  const [gameWon, setGameWon] = useState(false);
+  const [pointsAwarded, setPointsAwarded] = useState(false); 
+
+  useEffect(() => {
+    if (selectedCards.length === 2) {
+      checkMatch();
+    }
+  }, [selectedCards]);
+
+  useEffect(() => {
+    if (matches === 8 && !pointsAwarded) {
+      setGameWon(true);
+      awardPoints(); 
+    }
+  }, [matches]);
+
+  const awardPoints = async () => {
+    try {
+
       const userId = await getUserUUID();
-      savePointsToUser(userId, 50);
-      setCards(shuffle(initialCards.map(card => ({ ...card, flipped: false, matched: false }))));
-      setMatches(0);
-      setSelectedCards([]);
-    };
-  
-    return (
-        <SafeAreaView style={styles.background}>
-          <GoBackButton screen={"Overview"}/>
-          <View style={styles.container}>
-            {cards.map((card, index) => (
-              <Card key={index} card={card} index={index} onPress={flipCard} />
-            ))}
-          </View>
-          {matches === 8 && <ResetButton onPress={resetGame} />}
-        </SafeAreaView>
-      );
+      await savePointsToUser(userId, 50);
+      console.log("50 points added to the user");
+      setPointsAwarded(true); 
+    } catch (error) {
+      console.error("Error while saving points", error);
+    }
   };
-  
-  const styles = StyleSheet.create({
-    background: {
-        flex: 1,
-        backgroundColor: '#a3afc0',
-      },
-    container: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: 300,
-      margin: 'auto',
-      marginTop: 170, 
-    },
-  });
+
+  const flipCard = (index) => {
+    const newCards = [...cards];
+    newCards[index].flipped = true;
+    setCards(newCards);
+    setSelectedCards((prev) => [...prev, index]);
+  };
+
+  const checkMatch = () => {
+    const [firstIndex, secondIndex] = selectedCards;
+    if (cards[firstIndex].value === cards[secondIndex].value) {
+      const newCards = [...cards];
+      newCards[firstIndex].matched = true;
+      newCards[secondIndex].matched = true;
+      setCards(newCards);
+      setMatches(matches + 1);
+    } else {
+      setTimeout(() => {
+        const newCards = [...cards];
+        newCards[firstIndex].flipped = false;
+        newCards[secondIndex].flipped = false;
+        setCards(newCards);
+      }, 1000);
+    }
+    setSelectedCards([]);
+  };
+
+  const resetGame = () => {
+    setCards(shuffle(initialCards.map(card => ({ ...card, flipped: false, matched: false }))));
+    setMatches(0);
+    setSelectedCards([]);
+    setGameWon(false);
+    setPointsAwarded(false);
+  };
+
+  return (
+    <SafeAreaView style={styles.background}>
+      <GoBackButton screen={"Overview"} />
+      <View style={styles.container}>
+        {cards.map((card, index) => (
+          <Card key={index} card={card} index={index} onPress={flipCard} />
+        ))}
+      </View>
+      {gameWon && (
+        <Text style={styles.wonText}>
+          Congratulations! You won and earned 50 points!
+        </Text>
+      )}
+      {gameWon && <ResetButton onPress={resetGame} />}
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: '#a3afc0',
+  },
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 300,
+    margin: 'auto',
+    marginTop: 170,
+  },
+  wonText: {
+    fontSize: 18,
+    color: '#000',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontWeight: 'bold',
+  },
+});
 
 export default MemoryGame;

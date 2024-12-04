@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Alert} from 'react-native';
+import { StyleSheet, View, Alert, Text} from 'react-native';
 import Logo from '../components/login/logo';
 import InputField from '../components/common/inputField';
 import SubmitButton from '../components/common/submitButton';
@@ -43,6 +43,8 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.greeting}>Hello!</Text>
+      <Text style={styles.info}>We are really happy to see you again!</Text>
       <Logo />
       <InputField placeholder="E-Mail" value={email} onChangeText={setEmail} keyboardType="email-address"/>
       <InputField placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
@@ -60,5 +62,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+  },
+  greeting: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 5,
+  },
+  info: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 80, 
   },
 });

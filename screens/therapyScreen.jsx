@@ -23,7 +23,7 @@ export default function Therapy() {
 
     const renderGameBlock = ({ item, index }) => {
         const inputRange = [(index - 1) * (width * 0.7 + 20), index * (width * 0.7 + 20), (index + 1) * (width * 0.7 + 20)];
-        
+
         const scale = scrollX.interpolate({
             inputRange,
             outputRange: [0.9, 1.1, 0.9],
@@ -63,6 +63,37 @@ export default function Therapy() {
                         { useNativeDriver: false }
                     )}
                 />
+                <View style={styles.indicatorContainer}>
+                    {games.map((_, i) => {
+                        const inputRange = [
+                            (i - 1) * (width * 0.7 + 20),
+                            i * (width * 0.7 + 20),
+                            (i + 1) * (width * 0.7 + 20),
+                        ];
+
+                        const dotScale = scrollX.interpolate({
+                            inputRange,
+                            outputRange: [0.8, 1.4, 0.8],
+                            extrapolate: 'clamp',
+                        });
+
+                        const dotOpacity = scrollX.interpolate({
+                            inputRange,
+                            outputRange: [0.4, 1, 0.4],
+                            extrapolate: 'clamp',
+                        });
+
+                        return (
+                            <Animated.View
+                                key={i}
+                                style={[
+                                    styles.dot,
+                                    { transform: [{ scale: dotScale }], opacity: dotOpacity },
+                                ]}
+                            />
+                        );
+                    })}
+                </View>
             </View>
         </SafeAreaView>
     );
@@ -82,7 +113,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: -10,
+        marginBottom: -30,
     },
     flatListContainer: {
         alignItems: 'center',
@@ -118,6 +149,20 @@ const styles = StyleSheet.create({
         height: 220,
         resizeMode: 'contain',
         marginTop: 50,
-
     },
-}); 
+    indicatorContainer: {
+        position: 'absolute',
+        bottom: 35, 
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%', 
+    },
+    dot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: '#61615E', 
+        marginHorizontal: 5,
+    },
+});
