@@ -14,7 +14,7 @@ export default function Therapy() {
         { id: '1', name: 'Memory', screen: 'MemoryGame', color: '#A0BDC7', image: require('../assets/memoryImageTherapy.png') },
         { id: '2', name: 'Catcher', screen: 'CatcherGame', color: '#CBDFBD', image: require('../assets/pandaImageTherapy.png') },
         { id: '3', name: 'Quiz', screen: 'QuizGame', color: '#A8AF71', image: require('../assets/quizImageTherapy.png') },
-        { id: '4', name: 'Shooter', screen: 'ShooterGame', color: '#D68b79', image: require('../assets/shooterImageTherapy.png') },
+        { id: '4', name: 'Shooter', screen: 'ShooterGame', color: '#eff0d0', image: require('../assets/shooterImageTherapy.png') },
     ];
 
     const handlePress = (screen) => {
@@ -71,7 +71,7 @@ export default function Therapy() {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#F6F4D2',
+        backgroundColor: '#f7d9c4',
     },
     container: {
         flex: 1,

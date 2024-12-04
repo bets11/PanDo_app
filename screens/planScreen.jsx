@@ -152,6 +152,10 @@ export default function Plan({ navigation }) {
     <View style={styles.mainContainer}>
       <SafeAreaView style={styles.safeArea}>
         <GoBackButton screen={"Overview"} />
+        <EventButtons
+        onAddPress={() => setPlanModalVisible(true)}
+        onOverviewPress={() => setSettingModalVisible(true)}
+      />
       </SafeAreaView>
       <Image source={require("../assets/todo.webp")} style={styles.pandaImage} />
 
@@ -164,11 +168,6 @@ export default function Plan({ navigation }) {
       >
         {selectedDate.toDateString()}
       </Calendar>
-
-      <EventButtons
-        onAddPress={() => setPlanModalVisible(true)}
-        onOverviewPress={() => setSettingModalVisible(true)}
-      />
       <PlanModal
         modalVisible={planModalVisible}
         closeModal={() => {
@@ -222,6 +221,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 15,
     marginTop: 70,
+
   },
   header: {
     fontSize: 20,

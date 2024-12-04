@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#dffcbc",
+    backgroundColor: "#f9cf9c",
   },
   orangeBackground: {
     backgroundColor: "#f9cf9c",
