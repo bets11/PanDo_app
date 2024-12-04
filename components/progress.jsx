@@ -48,8 +48,6 @@ export default function Progress() {
 
   const handleColorChange = async (color) => {
     if (color === "black" || unlockedColors.includes(color)) {
-
-      Alert.alert("Color Applied", `You have switched to the ${color} color!`);
       setCurrentPandaColor(colorImages[color]);
       await AsyncStorage.setItem("currentPandaKey", color);
       return;
@@ -101,7 +99,7 @@ export default function Progress() {
         </View>
       </SafeAreaView>
       <Text style={styles.headerText}>
-        Let’s give your Panda{"\n"}a cool new look!
+        Let’s give your Panda{"\n"}a new look!
       </Text>
       <View style={styles.progressPandaContainer}>
         <Image source={currentPandaColor} style={styles.progressPanda} />
@@ -130,7 +128,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f9cf9c",
+    backgroundColor: "#f9cf9c", 
   },
   safeArea: {
     position: "absolute",
@@ -149,10 +147,10 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowRadius: 4,
+    elevation: 6,
   },
   starIcon: {
     width: 24,
@@ -175,44 +173,60 @@ const styles = StyleSheet.create({
   progressPandaContainer: {
     width: 400,
     height: 450,
-    backgroundColor: "#fff",
-    borderWidth: 5,
-    borderColor: "#000",
-    borderRadius: 20,
+    backgroundColor: "#ffffff",
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 7,
+    elevation: 10,
   },
   progressPanda: {
     progressPanda: {
-      width: 350,
+      width: 350, 
       height: 350, 
-      resizeMode: "cover", 
-    },
+      resizeMode: "contain",
+    },    
   },
   colorCirclesContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    width: "80%",
-    marginTop: 20,
+    width: "90%", 
+    marginTop: 30,
+    paddingHorizontal: 10,
   },
   colorOption: {
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   colorCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: "#000",
+    width: 60, 
+    height: 60,
+    borderRadius: 30, 
+    borderWidth: 2,
+    borderColor: "#d9d9d9",
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 7,
   },
   unlockedColor: {
-    borderWidth: 2,
-    borderColor: "#00FF00",
+    borderWidth: 4,
+    borderColor: "#8FFF79", 
   },
   costText: {
-    marginTop: 5,
+    marginTop: 8,
     fontSize: 14,
-    color: "#333",
+    fontWeight: "600",
+    color: "#666",
   },
 });
