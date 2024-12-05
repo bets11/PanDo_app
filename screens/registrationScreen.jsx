@@ -30,8 +30,8 @@ export default function RegistrationScreen({ navigation }) {
       return;
     }
     const year = new Date(birthdate).getFullYear();
-    if (year < 2000) {
-      showModal('The year of birth must be 2000 or later');
+    if (year < 1900) {
+      showModal('The year of birth must be 1900 or later');
       return;
     }
 

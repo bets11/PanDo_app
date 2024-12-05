@@ -1,23 +1,21 @@
 import React, { useState } from "react";
-import {TouchableOpacity,Text,StyleSheet,Platform,View,Button,} from "react-native";
+import { TouchableOpacity, Text, StyleSheet, View, Button } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import Modal from "react-native-modal";
 
-export default function DatePickerField({label,date,onDateChange,isRequired = false,}) {
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [tempDate, setTempDate] = useState(date || new Date(2000, 0, 1)); 
+export default function DatePickerField({ label, date, onDateChange, isRequired = false }) {
+  const [showModal, setShowModal] = useState(false);
+  const [tempDate, setTempDate] = useState(date || new Date(2000, 0, 1)); // Temporary date for picker
 
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
-      setTempDate(selectedDate); 
-    }
-    if (Platform.OS !== "ios") {
-      setShowDatePicker(false); 
+      setTempDate(selectedDate);
     }
   };
 
   const handleConfirm = () => {
-    setShowDatePicker(false); 
-    onDateChange(tempDate); 
+    setShowModal(false);
+    onDateChange(tempDate); // Confirm and pass date to parent
   };
 
   return (
@@ -26,30 +24,28 @@ export default function DatePickerField({label,date,onDateChange,isRequired = fa
         {label} {isRequired && <Text style={styles.required}>*</Text>}
       </Text>
       <TouchableOpacity
-        onPress={() => setShowDatePicker(true)}
+        onPress={() => setShowModal(true)}
         style={styles.dateInput}
       >
         <Text style={{ color: date ? "#000" : "#888" }}>
           {date ? date.toLocaleDateString("de-DE") : "TT.MM.JJJJ"}
         </Text>
       </TouchableOpacity>
-      {showDatePicker && (
-        <View>
+      <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
+        <View style={styles.modalContent}>
           <DateTimePicker
             value={tempDate}
             mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
+            display="spinner"
             onChange={handleDateChange}
             minimumDate={new Date(1980, 0, 1)}
             maximumDate={new Date()}
           />
-          {Platform.OS === "ios" && (
-            <View style={styles.confirmButtonContainer}>
-              <Button title="Confirm" onPress={handleConfirm} />
-            </View>
-          )}
+          <View style={styles.confirmButtonContainer}>
+            <Button title="Confirm" onPress={handleConfirm} />
+          </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
 }
@@ -77,8 +73,14 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     backgroundColor: "#fff",
   },
-  confirmButtonContainer: {
-    marginTop: 10,
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
     alignItems: "center",
+  },
+  confirmButtonContainer: {
+    marginTop: 20,
+    width: "100%",
   },
 });

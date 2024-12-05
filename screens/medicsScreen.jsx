@@ -92,7 +92,7 @@ export default function Medics() {
   const handleDeleteMedicine = async (medicine) => {
     try {
     console.log('Deleting medicine:', medicine);
-    const response = await deleteMedicine(medicine.image_url, medicine.id);
+    const response = await deleteMedicine(medicine?.image_url || undefined, medicine.id);
     setMedicines((prev) => prev.filter((m) => m.id !== medicine.id));
     } catch (error) {
       console.error('Error deleting medicine:', error.message);

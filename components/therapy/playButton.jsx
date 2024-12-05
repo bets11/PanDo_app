@@ -11,7 +11,7 @@ export default function PlayButton({ onPress }) {
 
 const styles = StyleSheet.create({
     button: {
-       backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
         paddingVertical: 10,
         paddingHorizontal: 30,
         borderRadius: 10,

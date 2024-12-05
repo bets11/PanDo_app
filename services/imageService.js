@@ -65,44 +65,28 @@ export const uploadImage = async (uri, userId) => {
 };
 
 
-
 export const deleteMedicine = async (imageUrl, medicineId) => {
   try {
-    // Extract filename from the image URL
-    const fileNameMatch = imageUrl.match(/medicines\/(.+)$/);
-    if (!fileNameMatch || !fileNameMatch[1]) {
-      throw new Error('Invalid image URL format');
-    }
-    const fileName = fileNameMatch[1];
+    if (imageUrl) {
+      const fileNameMatch = imageUrl.match(/medicines\/(.+)$/);
+      if (!fileNameMatch || !fileNameMatch[1]) {
+        throw new Error('Invalid image URL format');
+      }
+      const fileName = fileNameMatch[1];
 
-    // Delete image from storage
-    const { error: storageError } = await supabase.storage
-      .from('medicines')
-      .remove([fileName]);
+      const { error: storageError } = await supabase.storage
+        .from('medicines')
+        .remove([fileName]);
 
-    if (storageError) {
-      console.error('Error deleting image:', storageError.message);
-      throw storageError;
-    }
-
-    console.log('Image deleted successfully:', fileName);
-
-    // Delete medicine record from database
-    const { error: dbError } = await supabase
-      .from('medications')
-      .delete()
-      .eq('id', medicineId);
-
-    if (dbError) {
-      console.error('Error deleting medicine record:', dbError.message);
-      throw dbError;
+      if (storageError) {
+        console.error('Error deleting image:', storageError.message);
+        throw storageError;
+      }
     }
 
-    console.log('Medicine record deleted successfully:', medicineId);
-
-    return { success: true };
+    return true;
   } catch (error) {
-    console.error('Delete operation failed:', error.message);
+    console.error('Error in deleteMedicine:', error.message);
     throw error;
   }
 };
