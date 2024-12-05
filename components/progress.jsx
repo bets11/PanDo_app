@@ -9,7 +9,7 @@ export default function Progress() {
   const [showAnimation, setShowAnimation] = useState(true);
   const [currentPandaColor, setCurrentPandaColor] = useState(require("../assets/progress_col1.png"));
   const [points, setPoints] = useState(0);
-  const [unlockedColors, setUnlockedColors] = useState(["col1"]); 
+  const [unlockedColors, setUnlockedColors] = useState(["col1"]);
 
   const colorKeys = {
     black: "col1",
@@ -92,8 +92,6 @@ export default function Progress() {
 
                 setCurrentPandaColor(colorImages[colorKey]);
                 await AsyncStorage.setItem("currentPandaKey", colorKey);
-
-                Alert.alert("Purchase Successful", `You have successfully purchased the ${color} color!`);
               } catch (error) {
                 console.error("Error updating points:", error.message);
                 Alert.alert("Error", "Failed to update points. Please try again.");
@@ -103,12 +101,12 @@ export default function Progress() {
         ]
       );
     } else {
-      Alert.alert("Insufficient Points", `You need ${cost - points} more points to buy this color.`);
+      Alert.alert("Oops!", `You need ${cost - points} more points to unlock this color. Keep playing and come back later!`);
     }
   };
 
   return (
-    <View style={[styles.container, !showAnimation && styles.orangeBackground]}>
+    <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <GoBackButton screen={"Overview"} />
         <View style={styles.pointsContainer}>
@@ -116,40 +114,32 @@ export default function Progress() {
           <Text style={styles.pointsText}>{points}</Text>
         </View>
       </SafeAreaView>
-      {showAnimation ? (
-        <View style={{ justifyContent: "center", alignItems: "center", width: "100%" }}>
-          <Animation
-            message="Great Job!"
-            imageSource={require("../assets/progress.webp")}
-            animationDuration={4000}
-            onAnimationEnd={handleAnimationEnd}
-          />
-        </View>
-      ) : (
-        <>
-          <Text style={styles.progressText}>PanDo</Text>
-          <View style={styles.progressPandaContainer}>
-            <Image source={currentPandaColor} style={styles.progressPanda} />
-          </View>
-          <View style={styles.colorCirclesContainer}>
-            {Object.entries(colorKeys).map(([color, key]) => (
-              <View key={key} style={styles.colorOption}>
-                <TouchableOpacity
-                  style={[
-                    styles.colorCircle,
-                    { backgroundColor: color === "black" ? "#333" : color }, 
-                    unlockedColors.includes(key) && styles.unlockedColor, 
-                  ]}
-                  onPress={() => handleColorChange(color)}
-                />
-                {color !== "black" && !unlockedColors.includes(key) && (
-                  <Text style={styles.costText}>{colorCosts[color]} points</Text>
-                )}
-              </View>
-            ))}
-          </View>
-        </>
-      )}
+      <Text style={styles.headerText}>
+        Let’s give your Panda{"\n"}a new look!
+      </Text>
+      <View style={styles.progressPandaContainer}>
+        <Image source={currentPandaColor} style={styles.progressPanda} />
+      </View>
+      <View style={styles.colorCirclesContainer}>
+        {Object.entries(colorCosts).map(([color, cost]) => {
+          const colorKey = colorKeys[color];
+          return (
+            <View key={color} style={styles.colorOption}>
+              <TouchableOpacity
+                style={[
+                  styles.colorCircle,
+                  { backgroundColor: color === "black" ? "#333" : color },
+                  unlockedColors.includes(colorKey) && styles.unlockedColor,
+                ]}
+                onPress={() => handleColorChange(color)}
+              />
+              {color !== "black" && !unlockedColors.includes(colorKey) && (
+                <Text style={styles.costText}>{cost} points</Text>
+              )}
+            </View>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -161,15 +151,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#f9cf9c",
   },
-  orangeBackground: {
-    backgroundColor: "#f9cf9c",
-  },
   safeArea: {
     position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
     padding: 10,
+  },
+  headerText: {
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 20,
+    lineHeight: 36,
+    color: "#333",
   },
   pointsContainer: {
     position: "absolute",
@@ -196,11 +191,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
-  progressText: {
-    marginTop: 20,
-    fontWeight: "bold",
-    fontSize: 30,
-  },
   progressPandaContainer: {
     width: 400,
     height: 450,
@@ -211,17 +201,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 7,
+    elevation: 10,
   },
   progressPanda: {
-    width: 350,
-    height: 350,
+    width: 300,
+    height: 300,
     resizeMode: "contain",
   },
   colorCirclesContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     width: "80%",
-    marginTop: 20,
+    marginTop: 30,
+    paddingHorizontal: 10,
   },
   colorOption: {
     alignItems: "center",
@@ -230,12 +226,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    borderWidth: 2,
-    borderColor: "#d9d9d9",
-  },
-  unlockedColor: {
-    borderColor: "#8FFF79",
-    borderWidth: 4,
+    backgroundColor: "#fff",
   },
   costText: {
     marginTop: 8,
