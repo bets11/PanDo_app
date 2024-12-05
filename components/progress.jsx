@@ -4,12 +4,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Animation from "../components/animation/animation";
 import GoBackButton from "../components/common/goBackButton";
 import { getPointsFromUser, updateUserPoints } from "../services/pointsService";
+import { getUserUUID } from "../services/storageService";
 
 export default function Progress() {
   const [showAnimation, setShowAnimation] = useState(true);
   const [currentPandaColor, setCurrentPandaColor] = useState(require("../assets/progress_col1.png"));
   const [points, setPoints] = useState(0);
   const [unlockedColors, setUnlockedColors] = useState(["col1"]);
+
 
   const colorKeys = {
     black: "col1",
@@ -41,10 +43,12 @@ export default function Progress() {
         const userPoints = await getPointsFromUser();
         setPoints(userPoints || 0);
 
-        const savedUnlockedColors = await AsyncStorage.getItem("unlockedColors");
+        const userId = await getUserUUID();
+
+        const savedUnlockedColors = await AsyncStorage.getItem(`unlockedColors_${userId}`);
         setUnlockedColors(savedUnlockedColors ? JSON.parse(savedUnlockedColors) : ["col1"]);
 
-        const savedKey = await AsyncStorage.getItem("currentPandaKey");
+        const savedKey = await AsyncStorage.getItem(`currentPandaKey_${userId}`);
         if (savedKey && colorImages[savedKey]) {
           setCurrentPandaColor(colorImages[savedKey]);
         } else {
@@ -64,10 +68,11 @@ export default function Progress() {
 
   const handleColorChange = async (color) => {
     const colorKey = colorKeys[color];
+    const userId = await getUserUUID();
 
     if (color === "black" || unlockedColors.includes(colorKey)) {
       setCurrentPandaColor(colorImages[colorKey]);
-      await AsyncStorage.setItem("currentPandaKey", colorKey);
+      await AsyncStorage.setItem(`currentPandaKey_${userId}`, colorKey);
       return;
     }
 
@@ -88,10 +93,10 @@ export default function Progress() {
 
                 const updatedUnlockedColors = [...unlockedColors, colorKey];
                 setUnlockedColors(updatedUnlockedColors);
-                await AsyncStorage.setItem("unlockedColors", JSON.stringify(updatedUnlockedColors));
+                await AsyncStorage.setItem(`unlockedColors_${userId}`, JSON.stringify(updatedUnlockedColors));
 
                 setCurrentPandaColor(colorImages[colorKey]);
-                await AsyncStorage.setItem("currentPandaKey", colorKey);
+                await AsyncStorage.setItem(`currentPandaKey_${userId}`, colorKey);
               } catch (error) {
                 console.error("Error updating points:", error.message);
                 Alert.alert("Error", "Failed to update points. Please try again.");
