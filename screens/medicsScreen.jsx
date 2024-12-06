@@ -29,10 +29,12 @@ export default function Medics() {
       }
   
       console.log('Fetched original medicines:', data); 
-      // Parse image_url field to extract publicUrl
+
       const parsedMedicines = data.map((item) => ({
         ...item,
-        image_url: item.image_url ? JSON.parse(item.image_url).publicUrl : null,
+        image_url: item.image_url
+          ? JSON.parse(item.image_url).publicUrl
+          : null, 
       }));
   
       console.log('Fetched medicines:', parsedMedicines);
@@ -53,18 +55,24 @@ export default function Medics() {
 
   const saveMedicine = async (medicine) => {
     console.log('Saving medicine:', medicine);
-
+  
     try {
       const userId = await getUserUUID();
   
+      const payload = {
+        user_id: userId,
+        name: medicine.name,
+        amount: medicine.amount,
+      };
+  
+      // Include image_url only if an image is provided
+      if (medicine.image) {
+        payload.image_url = medicine.image;
+      }
+
       const { data, error } = await supabase
         .from('medications')
-        .insert({
-          user_id: userId,
-          name: medicine.name,
-          amount: medicine.amount,
-          image_url: medicine.image, 
-        })
+        .insert( payload )
         .select();
   
       if (error) {
@@ -72,22 +80,29 @@ export default function Medics() {
         alert('Failed to save medicine. Please try again.');
         return;
       }
-
+  
       if (!data || data.length === 0) {
         console.error('No data returned after insert.');
         alert('Failed to save medicine. Please try again.');
         return;
       }
   
-      setMedicines((prev) => [data[0], ...prev]);
+      const newMedicine = {
+        ...data[0],
+        image_url: data[0].image_url
+          ? JSON.parse(data[0].image_url).publicUrl
+          : null,
+      };
+  
+      setMedicines((prev) => [newMedicine, ...prev]);
     } catch (err) {
       console.error('Unexpected error saving medicine:', err.message);
       alert('Failed to save medicine. Please try again.');
     }
   
     toggleModal();
-  };
-  
+  };  
+
 
   const handleDeleteMedicine = async (medicine) => {
     try {
@@ -112,6 +127,7 @@ export default function Medics() {
             <FlatList
                 data={medicines}
                 keyExtractor={(item) => item.id}
+                extraData={medicines}
                 renderItem={({ item }) => (
                     <MedicineListItem
                         medicine={item}

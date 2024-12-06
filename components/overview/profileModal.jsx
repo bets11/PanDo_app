@@ -3,6 +3,7 @@ import {View,Text,TouchableOpacity,StyleSheet,Modal,Image,ActivityIndicator,Anim
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../../lib/supabase";
 import { getUserUUID } from "../../services/storageService";
+import { useNavigation } from '@react-navigation/native';
 
 const profileImages = {
   col1: require("../../assets/pandaProfil.png"), 
@@ -20,6 +21,7 @@ export default function ProfileModal({ visible, onClose }) {
   const [loading, setLoading] = useState(false); 
   const [currentProfileImage, setCurrentProfileImage] = useState(profileImages.col1); 
   const translateX = useState(new Animated.Value(-width))[0];
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (visible) {
@@ -86,6 +88,18 @@ export default function ProfileModal({ visible, onClose }) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      onClose();
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error logging out:', error.message);
+      Alert.alert('Error', 'Failed to logout. Please try again.');
+    }
+  };
+
   return (
     <Modal transparent visible={visible} animationType="none">
       <View style={styles.modalOverlay}>
@@ -123,12 +137,31 @@ export default function ProfileModal({ visible, onClose }) {
                       : "Not set"}
                   </Text>
                 </View>
+                <View style={styles.infoContainer}>
+                  <Text style={styles.infoLabel}>Height:</Text>
+                  <Text style={styles.infoValue}>
+                    {profile.height ? `${profile.height} cm` : "Not set"}
+                  </Text>
+                </View>
+                <View style={styles.infoContainer}>
+                  <Text style={styles.infoLabel}>Weight:</Text>
+                  <Text style={styles.infoValue}>
+                    {profile.weight ? `${profile.weight} kg` : "Not set"}
+                  </Text>
+                </View>
+                <View style={styles.infoContainer}>
+                  <Text style={styles.infoLabel}>Condition:</Text>
+                  <Text style={styles.infoValue}>{profile.condition || "Not set"}</Text>
+                </View>
               </>
             ) : (
               <Text style={styles.profileText}>No profile data available</Text>
             )}
               <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                 <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                <Text style={styles.logoutButtonText}>Logout</Text>
               </TouchableOpacity>
             </>
           )}
@@ -211,5 +244,20 @@ const styles = StyleSheet.create({
     flex: 2,
     textAlign: "right",
   },
-  
+  logoutButton: {
+    backgroundColor: '#dffcbc',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 10,
+    marginHorizontal: 20,
+    width: '40%',
+    top: 150,
+  },
+  logoutButtonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
+  }
 });

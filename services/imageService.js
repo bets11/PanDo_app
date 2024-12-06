@@ -67,6 +67,7 @@ export const uploadImage = async (uri, userId) => {
 
 export const deleteMedicine = async (imageUrl, medicineId) => {
   try {
+    // Delete image if imageUrl is provided
     if (imageUrl) {
       const fileNameMatch = imageUrl.match(/medicines\/(.+)$/);
       if (!fileNameMatch || !fileNameMatch[1]) {
@@ -82,6 +83,17 @@ export const deleteMedicine = async (imageUrl, medicineId) => {
         console.error('Error deleting image:', storageError.message);
         throw storageError;
       }
+    }
+
+    // Delete the medicine entry from the database
+    const { data, error } = await supabase
+      .from('medications')
+      .delete()
+      .eq('id', medicineId);
+
+    if (error) {
+      console.error('Error deleting medicine:', error.message);
+      throw error;
     }
 
     return true;
