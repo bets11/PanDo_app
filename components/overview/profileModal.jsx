@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {View,Text,TouchableOpacity,StyleSheet,Modal,Image,ActivityIndicator,Animated,Dimensions,} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Image, ActivityIndicator, Animated, Dimensions, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../../lib/supabase";
 import { getUserUUID } from "../../services/storageService";
@@ -16,17 +16,17 @@ const profileImages = {
 const { width } = Dimensions.get("window");
 
 export default function ProfileModal({ visible, onClose }) {
-  const [profile, setProfile] = useState(null); 
-  const [email, setEmail] = useState(null); 
-  const [loading, setLoading] = useState(false); 
-  const [currentProfileImage, setCurrentProfileImage] = useState(profileImages.col1); 
+  const [profile, setProfile] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [currentProfileImage, setCurrentProfileImage] = useState(profileImages.col1);
   const translateX = useState(new Animated.Value(-width))[0];
   const navigation = useNavigation();
 
   useEffect(() => {
     if (visible) {
-      fetchProfileData(); 
-      loadProfileImage(); 
+      fetchProfileData();
+      loadProfileImage();
       Animated.timing(translateX, {
         toValue: 0,
         duration: 600,
@@ -46,7 +46,7 @@ export default function ProfileModal({ visible, onClose }) {
   const fetchProfileData = async () => {
     setLoading(true);
     try {
-      const userId = await getUserUUID(); 
+      const userId = await getUserUUID();
 
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
@@ -76,15 +76,16 @@ export default function ProfileModal({ visible, onClose }) {
 
   const loadProfileImage = async () => {
     try {
-      const savedKey = await AsyncStorage.getItem("currentPandaKey"); 
+      const userId = await getUserUUID(); 
+      const savedKey = await AsyncStorage.getItem(`currentPandaKey_${userId}`);
       if (savedKey && profileImages[savedKey]) {
-        setCurrentProfileImage(profileImages[savedKey]); 
+        setCurrentProfileImage(profileImages[savedKey]);
       } else {
         setCurrentProfileImage(profileImages.col1); 
       }
     } catch (error) {
       console.error("Error loading profile image:", error.message);
-      setCurrentProfileImage(profileImages.col1); 
+      setCurrentProfileImage(profileImages.col1);
     }
   };
 
@@ -258,6 +259,5 @@ const styles = StyleSheet.create({
   logoutButtonText: {
     color: '#000',
     fontSize: 16,
-    fontWeight: 'bold',
   }
 });
