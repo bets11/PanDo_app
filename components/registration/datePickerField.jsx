@@ -15,7 +15,7 @@ export default function DatePickerField({ label, date, onDateChange, isRequired 
 
   const handleConfirm = () => {
     setShowModal(false);
-    onDateChange(tempDate); // Confirm and pass date to parent
+    onDateChange(tempDate); 
   };
 
   return (
@@ -41,9 +41,9 @@ export default function DatePickerField({ label, date, onDateChange, isRequired 
             minimumDate={new Date(1980, 0, 1)}
             maximumDate={new Date()}
           />
-          <View style={styles.confirmButtonContainer}>
-            <Button title="Confirm" onPress={handleConfirm} />
-          </View>
+          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+            <Text style={styles.confirmButtonText}>Confirm</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     </View>
@@ -79,8 +79,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-  confirmButtonContainer: {
+  confirmButton: {
     marginTop: 20,
-    width: "100%",
+    backgroundColor: "#98ac6f", 
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  confirmButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

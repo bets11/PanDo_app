@@ -9,6 +9,8 @@ import Calendar from "../components/plan/daySelecter";
 import { useFocusEffect } from "@react-navigation/native";
 import SettingsModal from "../components/plan/settingsModal";
 import EventModal from "../components/plan/eventModal";
+import ViewButtons from "../components/plan/ViewButtons";
+
 
 export default function Plan({ navigation }) {
   const [calendarEvents, setCalendarEvents] = useState([]);
@@ -19,6 +21,8 @@ export default function Plan({ navigation }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventTime, setEventTime] = useState({});
   const [selectedView, setSelectedView] = useState(1);
+  const handleOneDayPress = () => setSelectedView(1);
+  const handleThreeDayPress = () => setSelectedView(3);
 
   const fetchEvents = async () => {
     const userId = await getUserUUID();
@@ -154,11 +158,12 @@ export default function Plan({ navigation }) {
         <GoBackButton screen={"Overview"} />
         <EventButtons
         onAddPress={() => setPlanModalVisible(true)}
-        onOverviewPress={() => setSettingModalVisible(true)}
       />
       </SafeAreaView>
-      <Image source={require("../assets/todo.webp")} style={styles.pandaImage} />
-
+      <ViewButtons
+        onOneDayPress={handleOneDayPress}
+        onThreeDayPress={handleThreeDayPress}
+      />
       <Calendar
         style={styles.header}
         setSelectedDate={setSelectedDate}
@@ -214,14 +219,6 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     padding: 10,
-  },
-  pandaImage: {
-    width: 45,
-    height: 45,
-    alignSelf: "center",
-    marginBottom: 15,
-    marginTop: 70,
-
   },
   header: {
     fontSize: 20,

@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Image,
-  ActivityIndicator,
-  Animated,
-  Dimensions,
-} from "react-native";
+import {View,Text,TouchableOpacity,StyleSheet,Modal,Image,ActivityIndicator,Animated,Dimensions,} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../../lib/supabase";
 import { getUserUUID } from "../../services/storageService";
@@ -116,29 +106,27 @@ export default function ProfileModal({ visible, onClose }) {
               <Text style={styles.profileTitle}>Profile</Text>
 
               {profile ? (
-                <>
-                  <Text style={styles.profileText}>
-                    {profile.full_name || "Name not set"}
-                  </Text>
-                  <Text style={styles.profileText}>
-                    {email || "Email not set"}
-                  </Text>
-                  <Text style={styles.profileText}>
+              <>
+                <View style={styles.infoContainer}>
+                  <Text style={styles.infoLabel}>Name:</Text>
+                  <Text style={styles.infoValue}>{profile.full_name || "Name not set"}</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                  <Text style={styles.infoLabel}>Email:</Text>
+                  <Text style={styles.infoValue}>{email || "Email not set"}</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                  <Text style={styles.infoLabel}>Birthdate:</Text>
+                  <Text style={styles.infoValue}>
                     {profile.birthdate
                       ? profile.birthdate.split("-").reverse().join(".")
                       : "Not set"}
                   </Text>
-                  <Text style={styles.profileText}>
-                    {profile.illness || ""}
-                  </Text>
-                  <Text style={styles.profileText}>
-                    {profile.medicines || ""}
-                  </Text>
-                </>
-              ) : (
-                <Text style={styles.profileText}>No profile data available</Text>
-              )}
-
+                </View>
+              </>
+            ) : (
+              <Text style={styles.profileText}>No profile data available</Text>
+            )}
               <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
@@ -203,4 +191,25 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#000",
   },
+  infoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#dcdcdc",
+  },
+  infoLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#555",
+    flex: 1,
+  },
+  infoValue: {
+    fontSize: 18,
+    color: "#333",
+    flex: 2,
+    textAlign: "right",
+  },
+  
 });

@@ -1,7 +1,26 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 
 export default function MedicineListItem({ medicine, onEdit, onDelete }) {
+  const confirmDelete = () => {
+    Alert.alert(
+      'Confirm Delete', 
+      'Are you sure you want to delete this medicine?', 
+      [
+        {
+          text: 'Cancel', 
+          style: 'cancel',
+        },
+        {
+          text: 'Delete', 
+          style: 'destructive',
+          onPress: onDelete, 
+        },
+      ],
+      { cancelable: true } 
+    );
+  };
+
   return (
     <View style={styles.itemContainer}>
       {medicine.image_url && (
@@ -18,7 +37,7 @@ export default function MedicineListItem({ medicine, onEdit, onDelete }) {
         <TouchableOpacity onPress={onEdit}>
           <Text style={styles.actionText}>✏️</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onDelete}>
+        <TouchableOpacity onPress={confirmDelete}>
           <Text style={styles.actionText}>🗑️</Text>
         </TouchableOpacity>
       </View>
@@ -60,6 +79,6 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 18,
-    marginHorizontal: 5,
+    marginHorizontal: 20,
   },
 });

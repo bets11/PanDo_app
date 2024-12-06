@@ -95,21 +95,40 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
   };
 
   const handleDelete = async () => {
-    try {
-      const { error } = await supabase
-        .from("events")
-        .delete()
-        .eq("id", event.id);
-
-      if (error) {
-        Alert.alert("Error", "Failed to delete event.");
-        return;
-      }
-      onClose(); 
-    } catch {
-      Alert.alert("Error", "An unexpected error occurred.");
-    }
+    Alert.alert(
+      "Delete Event",
+      "Are you sure you want to delete this event?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel", 
+        },
+        {
+          text: "Delete",
+          style: "destructive", 
+          onPress: async () => {
+            try {
+              const { error } = await supabase
+                .from("events")
+                .delete()
+                .eq("id", event.id);
+  
+              if (error) {
+                Alert.alert("Error", "Failed to delete event.");
+                return;
+              }
+  
+              onClose();
+            } catch {
+              Alert.alert("Error", "An unexpected error occurred.");
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
+  
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">

@@ -218,10 +218,10 @@ export default function PlanModal({modalVisible,closeModal,selectEvent,eventTime
               </View>
               <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={[styles.button, styles.deleteButton]}
+                style={[styles.button, styles.backButton]}
                 onPress={() => setStepWithPresetTime(1)}>
 
-                <Text style={styles.buttonText}>Delete</Text>
+                <Text style={styles.buttonText}>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.closeButton]}
@@ -380,8 +380,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
-  deleteButton: {
-    backgroundColor: "#F66257", 
+  backButton: {
+    backgroundColor: "#A0D0FF", 
   },
   closeButton: {
     backgroundColor: "#888888", 

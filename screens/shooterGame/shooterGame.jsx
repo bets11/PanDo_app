@@ -14,6 +14,8 @@ const BRICK_WIDTH = 60;
 const BRICK_HEIGHT = 20;
 const BRICK_ROWS = 20;
 const BRICK_COLUMNS = Math.floor(width / BRICK_WIDTH);
+const BRICK_SPACING = (width % BRICK_WIDTH) / (BRICK_COLUMNS - 1);
+
 
 const ShooterGame = () => {
   const [paddlePosition, setPaddlePosition] = useState({ x: width / 2 - 50 });
@@ -29,7 +31,7 @@ const ShooterGame = () => {
     return Array.from({ length: BRICK_ROWS * BRICK_COLUMNS }, (_, index) => ({
       id: index,
       position: {
-        x: (index % BRICK_COLUMNS) * BRICK_WIDTH,
+        x: (index % BRICK_COLUMNS) * (BRICK_WIDTH + BRICK_SPACING),
         y: Math.floor(index / BRICK_COLUMNS) * BRICK_HEIGHT + 100,
       },
       width: BRICK_WIDTH,
@@ -136,24 +138,34 @@ const ShooterGame = () => {
 
   return (
     <SafeAreaView style={styles.container} {...panResponder.panHandlers}>
-      <GoBackButton />
-      <View style={styles.status}>
-        <Text style={styles.statusText}>Score: {score}</Text>
-        <Text style={styles.statusText}>Lives: {lives}</Text>
-      </View>
-      {gameState === 'start' && !IsStartButtonPressed && (
-        <View style={styles.overlay}>
-          <Text style={styles.title}>Breakout Game</Text>
-          <View style={styles.explanationBox}>
-            <Text style={styles.explanationText}>
-              Use the paddle to hit the ball and break all the bricks. Avoid letting the ball fall, or you'll lose a life! 
-              Collect points by destroying bricks.
-            </Text>
-            <PlayButton onPress={() => setIsStartButtonPressed(true)} />
-            </View>
+       <View style={styles.header}>
+    <GoBackButton />
+    <View style={styles.status}>
+      <Text style={styles.statusText}>Score: {score}</Text>
+      <Text style={styles.statusText}>Lives: {lives}</Text>
+    </View>
+    </View>
+    {gameState === 'start' && !IsStartButtonPressed && (
+      <View style={styles.overlay}>
+        <Text style={styles.title}>Shooter Game</Text>
+        <View style={styles.explanationBox}>
+          <Text style={styles.explanationText}>
+            Use the paddle to hit the ball and break all the bricks. Avoid letting the ball fall, or you'll lose a life! 
+            Collect points by destroying bricks.
+          </Text>
+          <View style={styles.exampleView}>
+            <Brick
+              position={{ x: 40, y: 10 }}
+              width={60}
+              height={20}
+            />
+            <Ball position={{ x: 70, y: 70 }} />
+            <Paddle position={{ x: 30 }} />
+          </View>
+          <PlayButton onPress={() => setIsStartButtonPressed(true)} />
         </View>
-      )}
-
+      </View>
+    )}
       {gameState === 'start' && IsStartButtonPressed && (
         <TouchableWithoutFeedback onPress={() => startGame()}>
           <View style={styles.overlay}>
@@ -198,7 +210,26 @@ const ShooterGame = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DFFFD6',
+    backgroundColor: '#eff0d0',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10, 
+    marginTop: 10,
+  },
+  status: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: 150, 
+  },
+  statusText: {
+    fontSize: 18,
+    color: '#333',
+    marginHorizontal: 5, 
+    fontWeight: 'bold',
   },
   overlay: {
     ...StyleSheet.absoluteFill,
@@ -210,22 +241,12 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: '#fff',
     marginBottom: 40,
-    fontWeight:'bold',
-
-  },
-  status: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 20,
-    marginTop: 10,
-  },
-  statusText: {
-    fontSize: 32,
-    color: '#333',
+    fontWeight: 'bold',
   },
   explanationBox: {
-    padding: 20,
-    backgroundColor: '#E3F6CE', 
+    padding: 30,
+    width: '90%',
+    backgroundColor: '#eff0d0', 
     borderRadius: 10, 
     alignItems: 'center', 
     justifyContent: 'center',
@@ -239,13 +260,24 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#333',
     textAlign: 'center',
-    marginTop:50,
-  },
-  subtitle:{
-    fontSize:24,
+    marginTop: 50,
     fontWeight:'bold',
+  },
+  subtitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
     color: 'white',
-  }
+  },
+  exampleView: {
+    marginTop: 40,
+    marginBottom: -40,
+    marginVertical: 20,
+    width: 120,
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
 });
 
 export default ShooterGame;

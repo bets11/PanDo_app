@@ -55,10 +55,10 @@ export default function Overview() {
           <Image source={require('../assets/pandaProfil.png')} style={styles.profileIcon} />
         </TouchableOpacity>
       </SafeAreaView>
-
-      <Text style={styles.greeting}>Hello,</Text>
-      <Text style={styles.name}>{name}!</Text>
-
+      <View style={styles.nameBox}>
+        <Text style={styles.greeting}>Hello,</Text>
+        <Text style={styles.name}>{name}!</Text>
+        </View>
       <View style={styles.gridContainer}>
         <Button
           image={require('../assets/todo.webp')}
@@ -100,6 +100,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#C8DBC0',
     padding: 20,
     paddingTop: 60,
+  },
+  nameBox:{
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   greeting: {
     fontSize: 40,

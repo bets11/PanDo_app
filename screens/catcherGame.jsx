@@ -14,7 +14,7 @@ const CatcherGame = () => {
   const [elements, setElements] = useState([]);
   const [score, setScore] = useState(0);
   const [errors, setErrors] = useState(0);
-  const [gameState, setGameState] = useState('start'); // 'start', 'playing', 'gameOver'
+  const [gameState, setGameState] = useState('start'); 
   const [isStartButtonPressed, setIsStartButtonPressed] = useState(false);
 
   const panResponder = useRef(
@@ -126,12 +126,12 @@ const CatcherGame = () => {
       <View style={[styles.overlay]} pointerEvents="box-none">
         <View style={styles.centeredView}>
         <Text style={styles.title}>Catcher Game</Text>
-        <Text style={styles.text}>
+      </View>
+      <View style={styles.instructionBox}>
+      <Text style={styles.text}>
           Catch all the pandas, do not touch any cats! 
           If you lose 3 pandas or catch 3 cats, you will lose
         </Text>
-      </View>
-      <View style={styles.instructionBox}>
         <Image source={require('../assets/progress_col1.png')} style={styles.instructionImage} />
         <Text style={styles.instructionText}>points</Text>
         <Image source={require('../assets/cat.png')} style={styles.instructionImage} />
@@ -158,8 +158,8 @@ const CatcherGame = () => {
       )}
       {gameState === 'playing' && (
         <>
-          <Text style={styles.score}>Punkte: {score}</Text>
-          <Text style={styles.errors}>Fehler: {errors}</Text>
+          <Text style={styles.score}>Points: {score}</Text>
+          <Text style={styles.errors}>Penalties: {errors}</Text>
           {elements.map((element) => (
             <Animated.View
               key={element.id}
@@ -273,7 +273,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginHorizontal: 20, 
-    marginTop: 10,
+    marginTop: 30,
+    marginBottom: 30,
   },
   centeredView: {
     flex: 1,

@@ -3,6 +3,7 @@ import { getUserUUID } from '../services/storageService';
 import { savePointsToUser } from '../services/pointsService';
 import { View, Text, TouchableOpacity, StyleSheet, Image, SafeAreaView } from 'react-native';
 import GoBackButton from '../components/common/goBackButton';
+import PlayButton from '../components/therapy/playButton';
 
 const allQuestions = [
   { question: 'What happens in cystic fibrosis in the lungs?', options: ['lungs become larger', 'mucus gets stuck in the lungs', 'lungs turn blue', 'new lungs grow'], answer: 1 },
@@ -44,6 +45,7 @@ const QuizGame = () => {
   const [isCorrect, setIsCorrect] = useState(null);
   const [showScore, setShowScore] = useState(false);
   const [score, setScore] = useState(0);
+  const [gameState, setGameState] = useState('start'); 
 
   useEffect(() => {
     const randomQuestions = getRandomQuestions().map(shuffleOptions);
@@ -67,87 +69,159 @@ const QuizGame = () => {
         setIsCorrect(null);
       } else {
         setShowScore(true);
+        setGameState('gameOver');
       }
     }, 400);
   };
 
-  const handleRestart = async () => {
-    const userId = await getUserUUID();
-    savePointsToUser(userId, score);
+  const handleRestart = () => {
     const newQuestions = getRandomQuestions().map(shuffleOptions);
     setScore(0);
     setCurrentQuestion(0);
     setSelectedOption(null);
     setIsCorrect(null);
     setShowScore(false);
+    setGameState('start');
     setQuestions(newQuestions);
   };
 
-  if (questions.length === 0) {
+  if (gameState === 'start') {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <GoBackButton />
+        <View style={styles.overlay}>
+          <Text style={styles.title}>Quiz Game</Text>
+          <View style={styles.instructionBox}>
+            <Text style={styles.instructionText}>
+              Answer the questions correctly to score points! You have 10 questions in total.
+            </Text>
+            <Image source={require('../assets/quiz.jpg')} style={styles.instructionImage} />
+            <PlayButton onPress={() => setGameState('playing')} />
+          </View>
+        </View>
+      </SafeAreaView>
     );
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+  if (showScore) {
+    return (
+      <SafeAreaView style={styles.container}>
         <GoBackButton />
-      </View>
-
-      {showScore ? (
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreText}>Your Score: {score} / {questions.length}</Text>
           <TouchableOpacity style={styles.button} onPress={handleRestart}>
             <Text style={styles.buttonText}>RESTART QUIZ</Text>
           </TouchableOpacity>
         </View>
-      ) : (
-        <View style={styles.questionContainer}>
-          <Image source={require('../assets/quiz.jpg')} style={styles.image} />
-          <Text style={styles.progressText}>Question {currentQuestion + 1} / {questions.length}</Text>
-          <Text style={styles.questionText}>{questions[currentQuestion].question}</Text>
-          <View style={styles.optionsContainer}>
-            {questions[currentQuestion].options.map((option, index) => {
-              const isSelected = index === selectedOption;
-              const backgroundColor = isSelected
-                ? isCorrect
-                  ? '#a5d6a7' 
-                  : '#ef9a9a' 
-                : '#7A9E70'; 
+      </SafeAreaView>
+    );
+  }
 
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={[styles.optionButton, { backgroundColor }]}
-                  onPress={() => handleAnswerPress(index)}
-                  disabled={selectedOption !== null}
-                >
-                  <Text style={styles.optionText}>{option}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-      )}
+  return (
+    <SafeAreaView style={styles.container}>
+    <View style={styles.header}>
+      <GoBackButton />
     </View>
+    {gameState === 'start' ? (
+      <View style={styles.overlay}>
+        <Text style={styles.title}>Quiz Game</Text>
+        <View style={styles.instructionBox}>
+          <Text style={styles.instructionText}>
+            Answer the questions correctly to score points! You have 10 questions in total.
+          </Text>
+          <Image source={require('../assets/quiz.jpg')} style={styles.instructionImage} />
+          <PlayButton onPress={() => setGameState('playing')} />
+        </View>
+      </View>
+    ) : showScore ? (
+      <View style={styles.scoreContainer}>
+        <Text style={styles.scoreText}>Your Score: {score} / {questions.length}</Text>
+        <TouchableOpacity style={styles.button} onPress={handleRestart}>
+          <Text style={styles.buttonText}>RESTART QUIZ</Text>
+        </TouchableOpacity>
+      </View>
+    ) : (
+      <View style={styles.questionContainer}>
+        <Image source={require('../assets/quiz.jpg')} style={styles.image} />
+        <Text style={styles.progressText}>Question {currentQuestion + 1} / {questions.length}</Text>
+        <Text style={styles.questionText}>{questions[currentQuestion].question}</Text>
+        <View style={styles.optionsContainer}>
+          {questions[currentQuestion].options.map((option, index) => {
+            const isSelected = index === selectedOption;
+            const backgroundColor = isSelected
+              ? isCorrect
+                ? '#a5d6a7'
+                : '#ef9a9a'
+              : '#7A9E70';
+  
+            return (
+              <TouchableOpacity
+                key={index}
+                style={[styles.optionButton, { backgroundColor }]}
+                onPress={() => handleAnswerPress(index)}
+                disabled={selectedOption !== null}
+              >
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+    )}
+  </SafeAreaView>
+  
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#C7C2A2',
+    backgroundColor: '#A8AF71',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   header: {
     position: 'absolute',
-    top: 40,
-    left: 20,
+    top: 60, 
+    left: 5, 
+    zIndex: 10, 
+  },  
+  overlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 34,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  instructionBox: {
+    padding: 20,
+    backgroundColor: '#A8AF71',
+    borderRadius: 10,
+    elevation: 5,
+    width: '90%',
+    alignItems: 'center',
+  },
+  instructionText: {
+    fontSize: 18,
+    color: '#000',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontWeight: 'bold',
+  },
+  instructionImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginBottom: -10,
+    marginTop: 20,
   },
   questionContainer: {
     alignItems: 'center',
@@ -157,16 +231,6 @@ const styles = StyleSheet.create({
     height: 350,
     resizeMode: 'contain',
     marginBottom: 20,
-    alignSelf: 'center', 
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 24,
-    color: '#000',
   },
   progressText: {
     fontSize: 18,
@@ -191,13 +255,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
     alignItems: 'center',
-    optionButton: {
-    flex: 1, 
-    minWidth: '40%',
-    maxWidth: '45%', 
-    justifyContent: 'center',
-    },
-    
   },
   optionText: {
     fontSize: 18,

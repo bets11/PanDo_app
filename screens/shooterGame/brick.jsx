@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: '#f7e79e', 
     borderWidth: 1,
+    marginTop:30,
   },
 });
 

@@ -7,9 +7,6 @@ export default function EventButtons({ onAddPress, onOverviewPress }) {
       <TouchableOpacity style={styles.iconButton} onPress={onAddPress}>
         <Image source={require('../../assets/add.png')} style={styles.icon} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.iconButton} onPress={onOverviewPress}>
-        <Image source={require('../../assets/overview.png')} style={styles.icon} />
-      </TouchableOpacity>
     </View>
   );
 }
@@ -19,14 +16,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     position: 'absolute',
     top: 60,
-    right: 20,
+    right: -10,
   },
   iconButton: {
     marginLeft: 15,
   },
   icon: {
-    width: 35,
-    height: 35,
+    width: 45,
+    height: 45,
     resizeMode: 'contain',
   },
 });
