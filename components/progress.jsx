@@ -42,18 +42,17 @@ export default function Progress() {
         const userPoints = await getPointsFromUser();
         setPoints(userPoints || 0);
 
-
-       const userId = await getUserUUID();
-       const savedUnlockedColors = await AsyncStorage.getItem(`unlockedColors_${userId}`);
+        const userId = await getUserUUID();
+        const savedUnlockedColors = await AsyncStorage.getItem(`unlockedColors_${userId}`);
 
         setUnlockedColors(savedUnlockedColors ? JSON.parse(savedUnlockedColors) : ["col1"]);
 
         const savedKey = await AsyncStorage.getItem(`currentPandaKey_${userId}`);
         if (savedKey && colorImages[savedKey]) {
           setCurrentPandaColor(colorImages[savedKey]);
-          setCurrentSelectedColor(savedKey); 
+          setCurrentSelectedColor(savedKey);
         } else {
-          setCurrentPandaColor(colorImages.col1); 
+          setCurrentPandaColor(colorImages.col1);
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -96,7 +95,7 @@ export default function Progress() {
                 await AsyncStorage.setItem(`unlockedColors_${userId}`, JSON.stringify(updatedUnlockedColors));
 
                 setCurrentPandaColor(colorImages[colorKey]);
-                setCurrentSelectedColor(colorKey); 
+                setCurrentSelectedColor(colorKey);
                 AsyncStorage.setItem(`currentPandaKey_${userId}`, colorKey);
 
                 Alert.alert("Purchase Successful", `You have successfully purchased the ${color} color!`);
@@ -136,7 +135,22 @@ export default function Progress() {
           <Text style={styles.headerText}>
             Let’s give your Panda{"\n"}a new look!
           </Text>
-          <View style={styles.progressPandaContainer}>
+          <View
+            style={[
+              styles.progressPandaContainer,
+              {
+                shadowColor:
+                  currentSelectedColor === "col1" ? "#000" :
+                  currentSelectedColor === "col2" ? "blue" :
+                  currentSelectedColor === "col3" ? "green" :
+                  currentSelectedColor === "col4" ? "yellow" :
+                  "red", 
+                shadowOffset: { width: 0, height: 5 },
+                shadowOpacity: 0.8,
+                shadowRadius: 10,
+              },
+            ]}
+          >
             <Image source={currentPandaColor} style={styles.progressPanda} />
           </View>
           <View style={styles.colorCirclesContainer}>
@@ -214,16 +228,11 @@ const styles = StyleSheet.create({
     height: 450,
     backgroundColor: "#fff",
     borderWidth: 5,
-    borderColor: "#000",
+    borderColor: "#000", 
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 7,
-    elevation: 10,
   },
   progressPanda: {
     width: 300,
