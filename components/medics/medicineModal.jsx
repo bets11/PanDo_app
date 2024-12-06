@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
+import {View,Text,TouchableOpacity,StyleSheet,Modal,Image,KeyboardAvoidingView,Keyboard,TouchableWithoutFeedback,Platform,} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import InputField from '../common/inputField';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
@@ -49,8 +49,6 @@ export default function MedicineModal({ visible, medicine, onClose, onSave }) {
   
     onSave(medicineData);
   };
-  
-  
 
   const takePhoto = async () => {
     try {
@@ -60,9 +58,9 @@ export default function MedicineModal({ visible, medicine, onClose, onSave }) {
         return;
       }
       const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
       });
   
       if (!result.canceled) {
@@ -76,29 +74,34 @@ export default function MedicineModal({ visible, medicine, onClose, onSave }) {
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <View style={styles.photoContainer}>
-            {imageUri ? (
-              <Image source={{ uri: imageUri }} style={styles.imagePreview} />
-            ) : (
-              <TouchableOpacity style={styles.cameraButton} onPress={takePhoto}>
-                <Icon name="camera" size={30} color="#fff" />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.photoContainer}>
+              {imageUri ? (
+                <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+              ) : (
+                <TouchableOpacity style={styles.cameraButton} onPress={takePhoto}>
+                  <Icon name="camera" size={30} color="#fff" />
+                </TouchableOpacity>
+              )}
+            </View>
+            <InputField placeholder="Medicine Name" value={name} onChangeText={setName} />
+            <InputField placeholder="Amount (e.g. 2x/day)" value={amount} onChangeText={setAmount} />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
-            )}
+              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                <Text style={styles.saveButtonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <InputField placeholder="Medicine Name" value={name} onChangeText={setName} />
-          <InputField placeholder="Amount (e.g. 2x/day)" value={amount} onChangeText={setAmount} />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Save</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
@@ -106,7 +109,7 @@ export default function MedicineModal({ visible, medicine, onClose, onSave }) {
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -116,17 +119,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 15,
     alignItems: 'center',
-  },
-  pandaWrapper: {
-    position: 'absolute',
-    top: -30, 
-    alignItems: 'center',
-    width: '100%',
-  },
-  pandaImage: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
   },
   photoContainer: {
     width: 150,
@@ -151,15 +143,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover', 
-  },
-  inputField: {
-    width: '100%',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-    height: 40,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -188,7 +171,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-
-
-

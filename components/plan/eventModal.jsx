@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {View,Text,TextInput,TouchableOpacity,StyleSheet,Modal,Alert,} from "react-native";
+import {View,Text,TextInput,TouchableOpacity,StyleSheet,Modal,Alert,KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, Platform} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { supabase } from "../../lib/supabase";
 
@@ -132,94 +132,107 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.title}>Edit Event</Text>
-          <Text style={styles.label}>Event Type:</Text>
-          <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={updatedEvent.type}
-            onValueChange={(itemValue) =>
-              setUpdatedEvent((prev) => ({ ...prev, type: itemValue }))
-            }
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            mode="dropdown" 
-          >
-            <Picker.Item label="Therapy" value="Therapy" />
-            <Picker.Item label="Medicine" value="Medicine" />
-            <Picker.Item label="Sports" value="Sports" />
-          </Picker>
-        </View>
-          <Text style={styles.label}>Start Time:</Text>
-          <View style={styles.timeInputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="HH"
-              placeholderTextColor="#888"
-              value={updatedEvent.startHour}
-              onChangeText={(text) =>
-                setUpdatedEvent((prev) => ({ ...prev, startHour: text }))
-              }
-              maxLength={2}
-              keyboardType="numeric"
-            />
-            <Text style={styles.colon}>:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="MM"
-              placeholderTextColor="#888"
-              value={updatedEvent.startMinute}
-              onChangeText={(text) =>
-                setUpdatedEvent((prev) => ({ ...prev, startMinute: text }))
-              }
-              maxLength={2}
-              keyboardType="numeric"
-            />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <View style={styles.modalContainer}>
+            <Text style={styles.title}>Edit Event</Text>
+            <Text style={styles.label}>Event Type:</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={updatedEvent.type}
+                onValueChange={(itemValue) =>
+                  setUpdatedEvent((prev) => ({ ...prev, type: itemValue }))
+                }
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+                mode="dropdown"
+              >
+                <Picker.Item label="Therapy" value="Therapy" />
+                <Picker.Item label="Medicine" value="Medicine" />
+                <Picker.Item label="Sports" value="Sports" />
+              </Picker>
+            </View>
+            <Text style={styles.label}>Start Time:</Text>
+            <View style={styles.timeInputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="HH"
+                placeholderTextColor="#888"
+                value={updatedEvent.startHour}
+                onChangeText={(text) =>
+                  setUpdatedEvent((prev) => ({ ...prev, startHour: text }))
+                }
+                maxLength={2}
+                keyboardType="numeric"
+              />
+              <Text style={styles.colon}>:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="MM"
+                placeholderTextColor="#888"
+                value={updatedEvent.startMinute}
+                onChangeText={(text) =>
+                  setUpdatedEvent((prev) => ({ ...prev, startMinute: text }))
+                }
+                maxLength={2}
+                keyboardType="numeric"
+              />
+            </View>
+            <Text style={styles.label}>End Time:</Text>
+            <View style={styles.timeInputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="HH"
+                placeholderTextColor="#888"
+                value={updatedEvent.endHour}
+                onChangeText={(text) =>
+                  setUpdatedEvent((prev) => ({ ...prev, endHour: text }))
+                }
+                maxLength={2}
+                keyboardType="numeric"
+              />
+              <Text style={styles.colon}>:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="MM"
+                placeholderTextColor="#888"
+                value={updatedEvent.endMinute}
+                onChangeText={(text) =>
+                  setUpdatedEvent((prev) => ({ ...prev, endMinute: text }))
+                }
+                maxLength={2}
+                keyboardType="numeric"
+              />
+            </View>
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.deleteButton]}
+                onPress={handleDelete}
+              >
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.closeButton]}
+                onPress={onClose}
+              >
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.saveButton]}
+                onPress={handleUpdate}
+              >
+                <Text style={styles.buttonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-
-          <Text style={styles.label}>End Time:</Text>
-          <View style={styles.timeInputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="HH"
-              placeholderTextColor="#888"
-              value={updatedEvent.endHour}
-              onChangeText={(text) =>
-                setUpdatedEvent((prev) => ({ ...prev, endHour: text }))
-              }
-              maxLength={2}
-              keyboardType="numeric"
-            />
-            <Text style={styles.colon}>:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="MM"
-              placeholderTextColor="#888"
-              value={updatedEvent.endMinute}
-              onChangeText={(text) =>
-                setUpdatedEvent((prev) => ({ ...prev, endMinute: text }))
-              }
-              maxLength={2}
-              keyboardType="numeric"
-            />
-          </View>
-
-          <View style={styles.buttonRow}>
-          <TouchableOpacity style={[styles.actionButton, styles.deleteButton]} onPress={handleDelete}>
-            <Text style={styles.buttonText}>Delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionButton, styles.closeButton]} onPress={onClose}>
-            <Text style={styles.buttonText}>Close</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionButton, styles.saveButton]} onPress={handleUpdate}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </Modal>
   );
+  
 }
 
 const styles = StyleSheet.create({
