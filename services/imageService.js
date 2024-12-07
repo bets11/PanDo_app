@@ -57,6 +57,7 @@ export const uploadImage = async (uri, userId) => {
       throw publicUrlError;
     }
 
+    console.log('Public URL:', publicUrl);
     return publicUrl;
   } catch (error) {
     console.error('Error uploading image:', error.message);

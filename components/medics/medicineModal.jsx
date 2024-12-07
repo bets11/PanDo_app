@@ -3,8 +3,9 @@ import {View,Text,TouchableOpacity,StyleSheet,Modal,Image,KeyboardAvoidingView,K
 import * as ImagePicker from 'expo-image-picker';
 import InputField from '../common/inputField';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
-import { uploadImage, deleteImage, listImages, saveMedicineToDatabase } from '../../services/imageService';
+import { uploadImage } from '../../services/imageService';
 import { getUserUUID } from '../../services/storageService';
+import { supabase } from '../../lib/supabase';
 
 export default function MedicineModal({ visible, medicine, onClose, onSave }) {
   const [name, setName] = useState('');
@@ -16,7 +17,7 @@ export default function MedicineModal({ visible, medicine, onClose, onSave }) {
       if (medicine) {
         setName(medicine.name || '');
         setAmount(medicine.amount || '');
-        setImageUri(medicine.image || null);
+        setImageUri(medicine.image_url || null);
       } else {
         setName('');
         setAmount('');
@@ -26,29 +27,60 @@ export default function MedicineModal({ visible, medicine, onClose, onSave }) {
   }, [visible, medicine]);
 
   const handleSave = async () => {
-    if (!name.trim()) return alert('Please enter medicine name');
-    if (!amount.trim()) return alert('Please enter amount');
-  
+    if (!name.trim()) return alert('Please enter a medicine name');
+    if (!amount.trim()) return alert('Please enter the amount');
+    
     let imageUrl = null;
   
-    if (imageUri) {
-      try {
-        const userId = await getUserUUID();
-        imageUrl = await uploadImage(imageUri, userId);
-      } catch (error) {
-        alert('Failed to upload image. Please try again.');
-        return;
+    try {
+      const userId = await getUserUUID();
+  
+      if (imageUri && imageUri !== medicine?.image_url) {
+        const uploadedUrl = await uploadImage(imageUri, userId);
+        imageUrl = uploadedUrl.publicUrl;
+      } else if (medicine?.image_url) {
+        imageUrl = medicine.image_url;
       }
+  
+      const medicineData = {
+        id: medicine?.id || undefined, // Use undefined for new medicine
+        name,
+        amount,
+        user_id: userId,
+        ...(imageUrl && { image_url: imageUrl }), // Only include image_url if it exists
+      };
+  
+      console.log('Saving medicine:', medicineData);
+  
+      const { data, error } = await supabase
+        .from('medications')
+        .upsert(medicineData, { onConflict: 'id' })
+        .select();
+  
+      if (error) throw error;
+  
+
+      console.log('raw image url:', data[0].image_url);
+      const savedMedicine = {
+        id: data[0].id,
+        name: data[0].name,
+        amount: data[0].amount,
+        image_url: data[0].image_url && data[0].image_url.startsWith('{') // Check if it's JSON
+        ? JSON.parse(data[0].image_url).publicUrl // Parse if JSON
+        : data[0].image_url, // Use as-is if it's already a plain string
+        user_id: data[0].user_id,
+      };
+  
+      console.log('Saved image url:', savedMedicine.image_url);
+      console.log('Saved medicine:', savedMedicine);
+      onSave(savedMedicine); 
+    } catch (error) {
+      console.error('Error saving medicine:', error.message);
+      alert('Failed to save medicine. Please try again.');
     }
-  
-    const medicineData = {
-      name,
-      amount,
-      image: imageUrl, 
-    };
-  
-    onSave(medicineData);
   };
+  
+  
 
   const takePhoto = async () => {
     try {
@@ -82,7 +114,13 @@ export default function MedicineModal({ visible, medicine, onClose, onSave }) {
           <View style={styles.modalContent}>
             <View style={styles.photoContainer}>
               {imageUri ? (
-                <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+                 <TouchableOpacity onPress={takePhoto} style={styles.imageContainer}>
+                 <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+                 <View style={styles.retakeOverlay}>
+                   <Icon name="camera" size={24} color="#fff" />
+                   <Text style={styles.retakeText}>Retake Photo</Text>
+                 </View>
+               </TouchableOpacity>
               ) : (
                 <TouchableOpacity style={styles.cameraButton} onPress={takePhoto}>
                   <Icon name="camera" size={30} color="#fff" />
@@ -169,5 +207,26 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  retakeOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  retakeText: {
+    color: '#fff',
+    marginTop: 5,
+    fontSize: 14,
+  },
+  imageContainer: {
+    width: '100%',
+    height: 200,
+    position: 'relative',
   },
 });
