@@ -10,7 +10,7 @@ import Plan from './screens/planScreen';
 import MedicsScreen from './screens/medicsScreen';
 import TherapyScreen from './screens/therapyScreen';
 import MemoryGame from './screens/memoryGame/memoryGame';
-import CatcherGame from './screens/catcherGame';
+import CatcherGame from './screens/catcherGame/catcherGame';
 import QuizGame from './screens/quizGame';
 import ShooterGame from './screens/shooterGame/shooterGame';
 
