@@ -106,7 +106,9 @@ const QuizGame = () => {
   if (showScore) {
     return (
       <SafeAreaView style={styles.container}>
-        <GoBackButton />
+        <View style={styles.header}>
+          <GoBackButton />
+        </View>
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreText}>Your Score: {score} / {questions.length}</Text>
           <TouchableOpacity style={styles.button} onPress={handleRestart}>
@@ -116,6 +118,7 @@ const QuizGame = () => {
       </SafeAreaView>
     );
   }
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -183,10 +186,10 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 60, 
-    left: 5, 
+    top: 40, 
+    left: 10, 
     zIndex: 10, 
-  },  
+  }, 
   overlay: {
     ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
@@ -262,11 +265,14 @@ const styles = StyleSheet.create({
   },
   scoreContainer: {
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1, 
   },
   scoreText: {
     fontSize: 24,
     color: '#000',
     marginBottom: 20,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: '#fff',
