@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {View,Text,Modal,TouchableOpacity,TextInput,StyleSheet,Alert,} from "react-native";
 
-export default function PlanModal({modalVisible,closeModal,selectEvent,eventTime,setEventTime,saveEvent,selectedDate}) {
+export default function PlanModal({modalVisible,closeModal,selectEvent,eventTime,setEventTime,saveEvent}) {
   const [selectedButton, setSelectedButton] = useState(null);
   const [step, setStep] = useState(1); 
 

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Text, TextInput, View, StyleSheet } from 'react-native';
 
-export default function FormField({ label, value, onChangeText, placeholderTextColor = "#888", isRequired = false }) {
+const FormField = forwardRef(({ label, value, onChangeText, placeholderTextColor = "#888", isRequired = false, returnKeyType, onSubmitEditing }, ref) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>
@@ -13,10 +13,13 @@ export default function FormField({ label, value, onChangeText, placeholderTextC
         value={value}
         onChangeText={onChangeText}
         autoCapitalize="none"
+        returnKeyType={returnKeyType} // Support for "Next" or "Done" button
+        onSubmitEditing={onSubmitEditing} // Triggered when the "Next" or "Done" button is pressed
+        ref={ref} // Pass ref for focus management
       />
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -41,3 +44,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 });
+
+export default FormField;
