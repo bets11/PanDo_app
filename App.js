@@ -9,10 +9,10 @@ import Progress from './components/progress';
 import Plan from './screens/planScreen';
 import MedicsScreen from './screens/medicsScreen';
 import TherapyScreen from './screens/therapyScreen';
-import MemoryGame from './screens/memoryGame/memoryGame';
-import CatcherGame from './screens/catcherGame/catcherGame';
+import MemoryGame from './screens/memoryGame';
+import CatcherGame from './screens/catcherGame';
 import QuizGame from './screens/quizGame';
-import ShooterGame from './screens/shooterGame/shooterGame';
+import ShooterGame from './screens/shooterGame';
 
 const Stack = createStackNavigator();
 

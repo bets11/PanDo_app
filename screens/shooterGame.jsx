@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, StyleSheet, Dimensions, PanResponder, Text, Button, TouchableWithoutFeedback  } from 'react-native';
-import Paddle from './paddle';
-import Ball from './ball';
-import Brick from './brick';
-import { savePointsToUser } from '../../services/pointsService';
-import { getUserUUID } from '../../services/storageService';
-import GoBackButton from '../../components/common/goBackButton';
-import PlayButton from '../../components/therapy/playButton';
+import Paddle from '../components/shooterGame/paddle';
+import Ball from '../components/shooterGame/ball';
+import Brick from '../components/shooterGame/brick';
+import { savePointsToUser } from '../services/pointsService';
+import { getUserUUID } from '../services/storageService';
+import GoBackButton from '../components/common/goBackButton';
+import PlayButton from '../components/therapy/playButton';
 
 const { width, height } = Dimensions.get('window');
 
