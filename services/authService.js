@@ -1,15 +1,7 @@
 import { supabase } from "../lib/supabase";
 import { storeUserUUID } from "./storageService";
 
-export async function registerUser(
-  email,
-  password,
-  fullName,
-  birthdate,
-  height,
-  weight,
-  condition
-) {
+export async function registerUser(email,password,fullName,birthdate,height,weight,condition) {
   try {
     const { data, error } = await supabase.auth.signUp({
       email,

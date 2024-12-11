@@ -43,7 +43,6 @@ export default function App() {
       }
     };
 
-    // Set up listeners for notifications
     const subscription1 = Notifications.addNotificationReceivedListener((notification) => {
       console.log('Notification received:', notification);
     });
@@ -51,11 +50,8 @@ export default function App() {
     const subscription2 = Notifications.addNotificationResponseReceivedListener((response) => {
       console.log('Notification response received:', response);
     });
-
-    // Request permissions on mount
     requestPermissions();
 
-    // Cleanup listeners on unmount
     return () => {
       subscription1.remove();
       subscription2.remove();

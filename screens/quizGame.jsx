@@ -257,6 +257,8 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 18,
     color: '#215F42',
+    fontWeight:'bold',
+    
   },
 }); 
 

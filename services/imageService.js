@@ -6,22 +6,19 @@ export const uploadImage = async (uri, userId) => {
   try {
     console.log('Starting image upload...', uri);
 
-    // Verify the file exists
     const fileInfo = await FileSystem.getInfoAsync(uri);
     if (!fileInfo.exists) {
       throw new Error('File does not exist');
     }
 
-    // Resize and compress the image
     const manipulatedImage = await ImageManipulator.manipulateAsync(
       uri,
-      [{ resize: { width: 1024 } }], // Resize to reduce file size
+      [{ resize: { width: 1024 } }], 
       { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
     );
 
     console.log('Manipulated Image:', manipulatedImage);
 
-    // Prepare file for upload
     const fileName = `${userId}-${Date.now()}.jpg`;
     const formData = new FormData();
 
@@ -33,7 +30,6 @@ export const uploadImage = async (uri, userId) => {
 
     console.log('Uploading file using FormData:', fileName);
 
-    // Upload using Supabase storage
     const { data, error } = await supabase.storage
       .from('medicines')
       .upload(fileName, formData, {
@@ -47,7 +43,6 @@ export const uploadImage = async (uri, userId) => {
 
     console.log('Upload successful:', data);
 
-    // Get public URL
     const { data: publicUrl, error: publicUrlError } = supabase.storage
       .from('medicines')
       .getPublicUrl(fileName);
@@ -68,7 +63,6 @@ export const uploadImage = async (uri, userId) => {
 
 export const deleteMedicine = async (imageUrl, medicineId) => {
   try {
-    // Delete image if imageUrl is provided
     if (imageUrl) {
       const fileNameMatch = imageUrl.match(/medicines\/(.+)$/);
       if (!fileNameMatch || !fileNameMatch[1]) {
@@ -86,7 +80,6 @@ export const deleteMedicine = async (imageUrl, medicineId) => {
       }
     }
 
-    // Delete the medicine entry from the database
     const { data, error } = await supabase
       .from('medications')
       .delete()
