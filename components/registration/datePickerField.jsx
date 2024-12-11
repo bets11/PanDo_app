@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { TouchableOpacity, Text, StyleSheet, View, Button } from "react-native";
+import React, { useState, forwardRef } from "react";
+import { TouchableOpacity, Text, StyleSheet, View, TextInput } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Modal from "react-native-modal";
 
-export default function DatePickerField({ label, date, onDateChange, isRequired = false }) {
+const DatePickerField = forwardRef(({ label, date, onDateChange, isRequired = false, onSubmitEditing }, ref) => {
   const [showModal, setShowModal] = useState(false);
   const [tempDate, setTempDate] = useState(date || new Date(2000, 0, 1)); // Temporary date for picker
 
@@ -15,7 +15,10 @@ export default function DatePickerField({ label, date, onDateChange, isRequired 
 
   const handleConfirm = () => {
     setShowModal(false);
-    onDateChange(tempDate); 
+    onDateChange(tempDate);
+    if (onSubmitEditing) {
+      onSubmitEditing(); 
+    }
   };
 
   return (
@@ -26,6 +29,7 @@ export default function DatePickerField({ label, date, onDateChange, isRequired 
       <TouchableOpacity
         onPress={() => setShowModal(true)}
         style={styles.dateInput}
+        ref={ref} 
       >
         <Text style={{ color: date ? "#000" : "#888" }}>
           {date ? date.toLocaleDateString("de-DE") : "TT.MM.JJJJ"}
@@ -48,7 +52,7 @@ export default function DatePickerField({ label, date, onDateChange, isRequired 
       </Modal>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -81,7 +85,7 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     marginTop: 20,
-    backgroundColor: "#98ac6f", 
+    backgroundColor: "#98ac6f",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -93,3 +97,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default DatePickerField;
