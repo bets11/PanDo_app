@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  FlatList,
-  Image,
-} from "react-native";
+import {StyleSheet,Text,View,SafeAreaView,FlatList,Image,} from "react-native";
 import GoBackButton from "../components/common/goBackButton";
 import MedicineModal from "../components/medics/medicineModal";
 import MedicineListItem from "../components/medics/medicineListItem";
@@ -40,15 +33,15 @@ export default function Medics() {
         let imageUrl = null;
         if (item.image_url) {
           try {
-            const parsed = JSON.parse(item.image_url); // Attempt to parse
-            imageUrl = parsed.publicUrl; // Extract publicUrl if parsing succeeds
+            const parsed = JSON.parse(item.image_url); 
+            imageUrl = parsed.publicUrl;
           } catch {
-            imageUrl = item.image_url; // If not JSON, use as is
+            imageUrl = item.image_url; 
           }
         }
         return {
           ...item,
-          image_url: imageUrl, // Set the resolved image URL
+          image_url: imageUrl, 
         };
       });
 
@@ -91,7 +84,7 @@ export default function Medics() {
               ? JSON.stringify({ publicUrl: newMedicine.image_url })
               : null,
           },
-          { onConflict: "id" } // Prevents duplicate entries
+          { onConflict: "id" } 
         ) 
         .select();
 
