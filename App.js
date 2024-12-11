@@ -5,7 +5,7 @@ import Start from './components/start';
 import LoginScreen from './screens/loginScreen';
 import RegistrationScreen from './screens/registrationScreen';
 import OverviewScreen from './screens/overviewScreen';
-import Progress from './components/progress';
+import Progress from './screens/progressScreen';
 import Plan from './screens/planScreen';
 import MedicsScreen from './screens/medicsScreen';
 import TherapyScreen from './screens/therapyScreen';
