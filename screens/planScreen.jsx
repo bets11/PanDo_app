@@ -10,6 +10,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import SettingsModal from "../components/plan/settingsModal";
 import EventModal from "../components/plan/eventModal";
 import ViewButtons from "../components/plan/ViewButtons";
+import { scheduleEventNotification } from "../services/notificationService";
 
 
 export default function Plan({ navigation }) {
@@ -23,6 +24,7 @@ export default function Plan({ navigation }) {
   const [selectedView, setSelectedView] = useState(1);
   const handleOneDayPress = () => setSelectedView(1);
   const handleThreeDayPress = () => setSelectedView(3);
+
 
   const fetchEvents = async () => {
     const userId = await getUserUUID();
@@ -59,7 +61,6 @@ export default function Plan({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("callign useEffect")
       fetchEvents();
     }, [])
   );
@@ -107,6 +108,10 @@ export default function Plan({ navigation }) {
         return;
       }
 
+      console.log("Event saved:", data[0]);
+
+      scheduleEventNotification(data[0].id ,newEvent.type, newEvent.start_time);
+
       const formattedEvent = {
         id: data[0]?.id.toString(),
         title: selectedEvent,
@@ -146,7 +151,6 @@ export default function Plan({ navigation }) {
   };
 
   const closeEventModal = () => {
-    console.log("Closing event modal"); 
     fetchEvents();
     setSelectedEvent(null);
     setIsEventModalVisible(false);

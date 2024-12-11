@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
-import {View,Text,TextInput,TouchableOpacity,StyleSheet,Modal,Alert,KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, Platform} from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  Alert,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Platform,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { supabase } from "../../lib/supabase";
+import { scheduleEventNotification, deleteEventNotification, getNotificationId } from "../../services/notificationService";
 
 const eventColors = {
   Therapy: "#C1E1DC",
@@ -44,7 +57,10 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
     endDate.setMinutes(parseInt(endMinute, 10));
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      Alert.alert("Invalid time input.", "Please enter valid start and end times.");
+      Alert.alert(
+        "Invalid time input.",
+        "Please enter valid start and end times."
+      );
       return false;
     }
 
@@ -84,13 +100,15 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
         return;
       }
 
+      scheduleEventNotification(updatedEvent.type, startTimestamp);
+
       onUpdate({
         ...updatedEvent,
         start: { dateTime: startTimestamp },
         end: { dateTime: endTimestamp },
         color: updatedColor,
       });
-      onClose(); 
+      onClose();
     } catch (err) {}
   };
 
@@ -101,23 +119,32 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
       [
         {
           text: "Cancel",
-          style: "cancel", 
+          style: "cancel",
         },
         {
           text: "Delete",
-          style: "destructive", 
+          style: "destructive",
           onPress: async () => {
             try {
+
+              const notificationId = await getNotificationId(event.id);
+              console.log("Notification ID for event", event.id, "is", notificationId);
+
+              if (notificationId) {
+                await deleteEventNotification(notificationId);
+                console.log("Notification for event", event.id, "deleted.");
+              }
+
               const { error } = await supabase
                 .from("events")
                 .delete()
                 .eq("id", event.id);
-  
+
               if (error) {
                 Alert.alert("Error", "Failed to delete event.");
                 return;
               }
-  
+
               onClose();
             } catch {
               Alert.alert("Error", "An unexpected error occurred.");
@@ -128,7 +155,6 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
       { cancelable: true }
     );
   };
-  
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
@@ -232,7 +258,6 @@ export default function EventModal({ visible, onClose, event, onUpdate }) {
       </TouchableWithoutFeedback>
     </Modal>
   );
-  
 }
 
 const styles = StyleSheet.create({
@@ -262,7 +287,7 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 8,
     fontWeight: "bold",
-    textAlign: "center", 
+    textAlign: "center",
   },
   pickerContainer: {
     borderWidth: 1,
@@ -270,7 +295,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 20,
     overflow: "hidden",
-    backgroundColor: "#f9f9f9", 
+    backgroundColor: "#f9f9f9",
     paddingHorizontal: 10,
   },
   picker: {
@@ -281,12 +306,12 @@ const styles = StyleSheet.create({
   pickerItem: {
     fontSize: 16,
     fontWeight: "bold",
-    color:'black',
-  },  
+    color: "black",
+  },
   timeInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", 
+    justifyContent: "center",
     marginBottom: 20,
   },
   input: {
@@ -330,4 +355,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
