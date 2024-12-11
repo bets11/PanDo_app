@@ -178,8 +178,8 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 40, 
-    left: 10, 
+    top: 50, 
+    left: 5, 
     zIndex: 10, 
   }, 
   overlay: {
