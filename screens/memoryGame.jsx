@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import Card from './card';
-import ResetButton from './resetButton';
-import GoBackButton from '../../components/common/goBackButton';
-import PlayButton from '../../components/therapy/playButton';
+import ResetButton from '../components/memoryGame/resetButton';
+import GoBackButton from '../components/common/goBackButton';
+import Card from '../components/memoryGame/card';
+import PlayButton from '../components/therapy/playButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { savePointsToUser } from '../../services/pointsService';
-import { getUserUUID } from '../../services/storageService';
+import { savePointsToUser } from '../services/pointsService';
+import { getUserUUID } from '../services/storageService';
 
 const MemoryGame = () => {
   const initialCards = [
-    { id: 1, value: require('../../assets/panda1.png'), flipped: false, matched: false },
-    { id: 2, value: require('../../assets/panda1.png'), flipped: false, matched: false },
-    { id: 3, value: require('../../assets/progress.webp'), flipped: false, matched: false },
-    { id: 4, value: require('../../assets/progress.webp'), flipped: false, matched: false },
-    { id: 5, value: require('../../assets/panda3.png'), flipped: false, matched: false },
-    { id: 6, value: require('../../assets/panda3.png'), flipped: false, matched: false },
-    { id: 7, value: require('../../assets/profile_col3.png'), flipped: false, matched: false },
-    { id: 8, value: require('../../assets/profile_col3.png'), flipped: false, matched: false },
-    { id: 9, value: require('../../assets/cat.png'), flipped: false, matched: false },
-    { id: 10, value: require('../../assets/cat.png'), flipped: false, matched: false },
-    { id: 11, value: require('../../assets/pandaProfil.png'), flipped: false, matched: false },
-    { id: 12, value: require('../../assets/pandaProfil.png'), flipped: false, matched: false },
-    { id: 13, value: require('../../assets/profile_col5.png'), flipped: false, matched: false },
-    { id: 14, value: require('../../assets/profile_col5.png'), flipped: false, matched: false },
-    { id: 15, value: require('../../assets/progress_col5.png'), flipped: false, matched: false },
-    { id: 16, value: require('../../assets/progress_col5.png'), flipped: false, matched: false },
+    { id: 1, value: require('../assets/panda1.png'), flipped: false, matched: false },
+    { id: 2, value: require('../assets/panda1.png'), flipped: false, matched: false },
+    { id: 3, value: require('../assets/progress.webp'), flipped: false, matched: false },
+    { id: 4, value: require('../assets/progress.webp'), flipped: false, matched: false },
+    { id: 5, value: require('../assets/panda3.png'), flipped: false, matched: false },
+    { id: 6, value: require('../assets/panda3.png'), flipped: false, matched: false },
+    { id: 7, value: require('../assets/profile_col3.png'), flipped: false, matched: false },
+    { id: 8, value: require('../assets/profile_col3.png'), flipped: false, matched: false },
+    { id: 9, value: require('../assets/cat.png'), flipped: false, matched: false },
+    { id: 10, value: require('../assets/cat.png'), flipped: false, matched: false },
+    { id: 11, value: require('../assets/pandaProfil.png'), flipped: false, matched: false },
+    { id: 12, value: require('../assets/pandaProfil.png'), flipped: false, matched: false },
+    { id: 13, value: require('../assets/profile_col5.png'), flipped: false, matched: false },
+    { id: 14, value: require('../assets/profile_col5.png'), flipped: false, matched: false },
+    { id: 15, value: require('../assets/progress_col5.png'), flipped: false, matched: false },
+    { id: 16, value: require('../assets/progress_col5.png'), flipped: false, matched: false },
   ];
 
   const shuffle = (array) => array.sort(() => Math.random() - 0.5);

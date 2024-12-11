@@ -52,6 +52,19 @@ const QuizGame = () => {
     setQuestions(randomQuestions);
   }, []);
 
+  const saveFinalScore = async () => {
+    try {
+      const userUUID = await getUserUUID(); 
+      if (userUUID) {
+        await savePointsToUser(userUUID, score); 
+      } else {
+        console.error("User UUID not found");
+      }
+    } catch (error) {
+      console.error("Failed to save points:", error);
+    }
+  };
+
   const handleAnswerPress = (index) => {
     setSelectedOption(index);
     const correct = index === questions[currentQuestion].answer;
@@ -70,6 +83,7 @@ const QuizGame = () => {
       } else {
         setShowScore(true);
         setGameState('gameOver');
+        saveFinalScore(); 
       }
     }, 400);
   };
@@ -118,32 +132,12 @@ const QuizGame = () => {
       </SafeAreaView>
     );
   }
-  
 
   return (
     <SafeAreaView style={styles.container}>
-    <View style={styles.header}>
-      <GoBackButton />
-    </View>
-    {gameState === 'start' ? (
-      <View style={styles.overlay}>
-        <Text style={styles.title}>Quiz Game</Text>
-        <View style={styles.instructionBox}>
-          <Text style={styles.instructionText}>
-            Answer the questions correctly to score points! You have 10 questions in total.
-          </Text>
-          <Image source={require('../assets/quiz.jpg')} style={styles.instructionImage} />
-          <PlayButton onPress={() => setGameState('playing')} />
-        </View>
+      <View style={styles.header}>
+        <GoBackButton />
       </View>
-    ) : showScore ? (
-      <View style={styles.scoreContainer}>
-        <Text style={styles.scoreText}>Your Score: {score} / {questions.length}</Text>
-        <TouchableOpacity style={styles.button} onPress={handleRestart}>
-          <Text style={styles.buttonText}>RESTART QUIZ</Text>
-        </TouchableOpacity>
-      </View>
-    ) : (
       <View style={styles.questionContainer}>
         <Image source={require('../assets/quiz.jpg')} style={styles.image} />
         <Text style={styles.progressText}>Question {currentQuestion + 1} / {questions.length}</Text>
@@ -156,7 +150,7 @@ const QuizGame = () => {
                 ? '#a5d6a7'
                 : '#ef9a9a'
               : '#7A9E70';
-  
+
             return (
               <TouchableOpacity
                 key={index}
@@ -170,9 +164,7 @@ const QuizGame = () => {
           })}
         </View>
       </View>
-    )}
-  </SafeAreaView>
-  
+    </SafeAreaView>
   );
 };
 
@@ -186,8 +178,8 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 40, 
-    left: 10, 
+    top: 50, 
+    left: 5, 
     zIndex: 10, 
   }, 
   overlay: {
@@ -283,6 +275,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#215F42',
   },
-});
+}); 
 
 export default QuizGame;

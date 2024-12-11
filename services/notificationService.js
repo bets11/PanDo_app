@@ -39,10 +39,8 @@ export async function deleteEventNotification(eventId) {
     if (notificationIndex !== -1) {
       const notificationId = storedNotifications[notificationIndex].notificationId;
 
-      // Cancel the notification
       await Notifications.cancelScheduledNotificationAsync(notificationId);
 
-      // Remove from AsyncStorage
       storedNotifications.splice(notificationIndex, 1);
       await AsyncStorage.setItem("notifications", JSON.stringify(storedNotifications));
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Animated, Dimensions, SafeAreaView } from 'react-native';
-import Element from '../catcherGame/element';
-import Catcher from '../catcherGame/catcher';
-import OverlayScreen from '../catcherGame/overlayScreen';
-import ScoreDisplay from '../catcherGame/scoreDisplay';
-import GoBackButton from '../../components/common/goBackButton';
-import { savePointsToUser } from '../../services/pointsService';
-import { getUserUUID } from '../../services/storageService';
+import { StyleSheet, Animated, Dimensions, SafeAreaView } from 'react-native';
+import Element from '../components/catcherGame/element';
+import Catcher from '../components/catcherGame/catcher';
+import OverlayScreen from '../components/catcherGame/overlayScreen';
+import ScoreDisplay from '../components/catcherGame/scoreDisplay';
+import GoBackButton from '../components/common/goBackButton';
+import { savePointsToUser } from '../services/pointsService';
+import { getUserUUID } from '../services/storageService';
 
 const { width, height } = Dimensions.get('window');
 const catcherSize = 150;
